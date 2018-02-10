@@ -1,0 +1,35 @@
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:id="@+id/root" >
+    
+    <TextView
+        android:id="@+id/usr"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user" />
+    
+    <EditText
+        android:id="@+id/usr_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text" />
+    
+    
+    
+    <TextView
+        android:id="@+id/giv_pwd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_password" />
+    
+    <TextView
+        android:id="@+id/pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_usr"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/grey" />
+    
+</LinearLayout>

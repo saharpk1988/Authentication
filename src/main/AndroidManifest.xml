@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.me.pinauthentication">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity" />
+        <activity android:name=".CreatePIN" android:label="PIN"/>
+        <activity android:name=".EnterPIN" android:label="PIN"/>
+        <activity android:name=".PINActivity" android:label="PIN"/>
+        <activity android:name=".PatternActivity" android:label="Pattern"/>
+        <activity android:name=".SwiPINActivity" android:label="SwiPIN"/>
+        <activity android:name=".LoginSuccessful" />
+        <activity android:name=".CreatePattern" android:label="Pattern"/>
+        <activity android:name=".EnterPattern" android:label="Pattern"/>
+        <activity android:name=".EnterSwiPIN" android:label="SwiPIN"/>
+        <activity android:name=".CreateSwiPIN" android:label="SwiPIN"/>
+        <activity android:name=".ConfirmPattern" android:label="Pattern"/>
+        <activity android:name=".SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+    </application>
+
+</manifest>

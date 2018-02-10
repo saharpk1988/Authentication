@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg1"
+    tools:context="com.example.me.pinauthentication.MainActivity">
+
+    <Button
+        android:id="@+id/PIN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Pattern"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/Pattern"
+        android:layout_marginTop="97dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/pin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light" />
+
+    <Button
+        android:id="@+id/Pattern"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/SwiPIN"
+        android:layout_alignStart="@+id/SwiPIN"
+        android:layout_below="@+id/PIN"
+        android:layout_marginTop="73dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:fadingEdge="horizontal|vertical"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/pattern"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/SwiPIN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Pattern"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/swipin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light" />
+
+
+</RelativeLayout>

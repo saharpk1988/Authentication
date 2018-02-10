@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_pattern"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg1"
+    tools:context="com.example.me.pinauthentication.PatternActivity">
+
+    <Button
+        android:id="@+id/button_create_SwiPIN"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button_enter_SwiPIN"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/button_enter_SwiPIN"
+        android:layout_below="@+id/button_enter_SwiPIN"
+        android:layout_marginTop="173dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/create_swipin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light" />
+
+    <Button
+        android:id="@+id/button_enter_SwiPIN"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="199dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/enter_swipin"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light" />
+
+
+</RelativeLayout>

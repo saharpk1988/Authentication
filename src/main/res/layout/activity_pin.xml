@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_pin"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg1"
+    tools:context="com.example.me.pinauthentication.PINActivity">
+
+    <Button
+        android:id="@+id/button_create_PIN"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button_enter_PIN"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/button_enter_PIN"
+        android:layout_marginTop="171dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="sans-serif-condensed"
+        android:text="Create PIN"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light" />
+
+    <Button
+        android:id="@+id/button_enter_PIN"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/button_create_PIN"
+        android:layout_marginTop="37dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="sans-serif-condensed"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light"
+        android:text="Enter PIN" />
+
+
+</RelativeLayout>

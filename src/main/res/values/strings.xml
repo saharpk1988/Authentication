@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">Authentication</string>
+    <string name="pin">PIN</string>
+    <string name="swipin">SwiPIN</string>
+    <string name="pattern">Pattern</string>
+    <string name="title_activity_enter_pattern">EnterPattern</string>
+    <string name="title_activity_entered_correctly">EnteredCorrectly</string>
+    <string name="tryAgain">Try again</string>
+    <string name="newMethod">Try another method</string>
+    <string name="try_again">Try again</string>
+    <string name="try_another_method">Try another method</string>
+    <string name="create_pattern">Create Pattern</string>
+    <string name="enter_pattern">Enter Pattern</string>
+    <string name="create_swipin">Create SwiPIN</string>
+    <string name="enter_swipin">Enter SwiPIN</string>
+    <string name="set_pattern">Set Pattern</string>
+    <string name="retry">Retry</string>
+    <string name="next">Next</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="set">Set</string>
+    <string name="set_userid">Set UserID</string>
+    <string name="title_activity_create_swi_pin">CreateSwiPIN</string>
+    <string name="action_delete">clear</string>
+    <string name="action_start">start</string>
+
+    <string name="one"></string>
+    <string name="two"></string>
+    <string name="three"></string>
+    <string name="four"></string>
+    <string name="five"></string>
+    <string name="six"></string>
+    <string name="seven"></string>
+    <string name="eight"></string>
+    <string name="nine"></string>
+    <string name="zero"></string>
+
+    <string name="g_hs"></string>
+    <string name="g_math"></string>
+    <string name="g_nature"></string>
+    <string name="g_rest"></string>
+
+    <string name="user">Enter User:</string>
+    <string name="settings_password">Your Password is:</string>
+    <string name="no_usr">Please enter user.</string>
+    <string name="button">Button</string>
+    <string name="clear">clear</string>
+
+
+</resources>

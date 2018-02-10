@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg1"
+    android:orientation="vertical"
+    tools:context="com.example.me.pinauthentication.CreatePattern">
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:background="#07000000"
+        android:gravity="center_horizontal"
+        android:text="@string/enter_pattern"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light"
+        android:textSize="17sp" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="#07000000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout">
+        <com.andrognito.patternlockview.PatternLockView
+            android:id="@+id/pattern_lock_view_enter"
+            android:layout_width="match_parent"
+            android:background="#07000000"
+            android:layout_marginTop="100dp"
+            app:correctStateColor="#ff669900"
+            app:normalStateColor="@color/white"
+            app:wrongStateColor="#ffcc0000"
+            android:layout_height="300dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEnterPattern"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ripple_effect"
+        android:enabled="true"
+        android:fadeScrollbars="true"
+        android:filterTouchesWhenObscured="false"
+        android:fontFamily="sans-serif-condensed"
+        android:text="@string/confirm"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/background_light" />
+</android.widget.RelativeLayout>
+

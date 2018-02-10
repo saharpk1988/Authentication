@@ -1,0 +1,159 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:weightSum="100"
+    tools:context=".Example" >
+
+    <TextView
+        android:id="@+id/pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_weight="7"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:maxLength="4"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
+        android:layout_gravity="center"
+        android:layout_weight="58"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <View
+            android:id="@+id/window"
+            android:layout_width="210dp"
+            android:layout_height="280dp" />
+
+        <ImageView
+            android:id="@+id/l_0"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignLeft="@+id/window"
+            android:layout_alignTop="@+id/window"
+            android:contentDescription="@string/one"
+            android:src="@drawable/red_up"
+            android:tag="UP" android:layout_alignStart="@+id/window" />
+
+        <ImageView
+            android:id="@+id/l_1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignTop="@+id/window"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/two"
+            android:src="@drawable/red_up"
+            android:tag="UP" />
+
+        <ImageView
+            android:id="@+id/r_0"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignRight="@+id/window"
+            android:layout_alignTop="@+id/window"
+            android:contentDescription="@string/three"
+            android:src="@drawable/yellow_up"
+            android:tag="UP" android:layout_alignEnd="@+id/window" />
+
+        <ImageView
+            android:id="@+id/l_2"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignLeft="@+id/window"
+            android:layout_alignTop="@+id/window"
+            android:layout_marginTop="70dp"
+            android:contentDescription="@string/four"
+            android:src="@drawable/red_up"
+            android:tag="UP" android:layout_alignStart="@+id/window" />
+
+        <ImageView
+            android:id="@+id/l_3"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignTop="@+id/window"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="70dp"
+            android:contentDescription="@string/five"
+            android:src="@drawable/red_up"
+            android:tag="UP" />
+
+        <ImageView
+            android:id="@+id/r_1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignRight="@+id/window"
+            android:layout_alignTop="@+id/window"
+            android:layout_marginTop="70dp"
+            android:contentDescription="@string/six"
+            android:src="@drawable/yellow_up"
+            android:tag="UP" android:layout_alignEnd="@+id/window" />
+
+        <ImageView
+            android:id="@+id/l_4"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignLeft="@+id/window"
+            android:layout_alignTop="@+id/window"
+            android:layout_marginTop="140dp"
+            android:contentDescription="@string/seven"
+            android:src="@drawable/red_up"
+            android:tag="UP" android:layout_alignStart="@+id/window" />
+
+        <ImageView
+            android:id="@+id/r_2"
+            android:layout_width="70dp"
+            android:layout_height="65dp"
+            android:layout_alignTop="@+id/window"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="140dp"
+            android:contentDescription="@string/eight"
+            android:src="@drawable/yellow_up"
+            android:tag="UP" />
+
+        <ImageView
+            android:id="@+id/r_3"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignRight="@+id/window"
+            android:layout_alignTop="@+id/window"
+            android:layout_marginTop="140dp"
+            android:contentDescription="@string/nine"
+            android:src="@drawable/yellow_up"
+            android:tag="UP" android:layout_alignEnd="@+id/window" />
+
+        <ImageView
+            android:id="@+id/r_4"
+            android:layout_width="70dp"
+            android:layout_height="65dp"
+            android:layout_alignBottom="@+id/window"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/zero"
+            android:src="@drawable/yellow_up"
+            android:tag="UP" />
+
+        <ImageView
+            android:id="@+id/zahlen"
+            android:layout_width="210dp"
+            android:layout_height="280dp"
+            android:layout_alignLeft="@id/window"
+            android:layout_alignTop="@id/window"
+            android:contentDescription="@string/zero"
+            android:src="@drawable/zahlen" android:layout_alignStart="@id/window" />
+    </RelativeLayout>
+
+    <com.example.me.pinauthentication.Window
+        android:id="@+id/swipe"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="35" />
+
+</LinearLayout>

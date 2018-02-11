@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
     Button PIN;
     Button Pattern;
     Button SwiPIN;
-    public static String user;
+
+
 
 
     @Override
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 final AlertDialog dialog= mBuilder.create();
                 dialog.show();
                 final EditText userID = (EditText) mView.findViewById(R.id.etUserID);
-                Button setUserID=(Button) mView.findViewById(R.id.btnUserID);
+                final Button setUserID=(Button) mView.findViewById(R.id.btnUserID);
                 setUserID.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -96,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                            // Logger.writeFile("UserID: " + userID.getText());
                             //Log userID to Swipin Log File
                             //Logger.swipinLog("UserID: " + userID.getText());
-                            user=userID.getText().toString();
                             PatternHandler.toastMessageHandler(MainActivity.this, "User ID has been set!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
                             dialog.dismiss();
                             SharedPreferences settings=getSharedPreferences("myUserID",0);

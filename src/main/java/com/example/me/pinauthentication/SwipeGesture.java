@@ -51,8 +51,8 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
     Boolean result;
     String created;
     long total;
-    private Context mContext;
-
+    Context context;
+    SharedPreferences pref;
 
 
 
@@ -218,7 +218,8 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
 
 
                 //load the UserID
-                user = MainActivity.user;
+                user=SwiPINActivity.UserID;
+                Log.d("username1", "onTouch: "+user);
                 //load orientation time
                 startOrientation=SwiPINActivity.startOrientation.getTime();
                 //SharedPreferences settings = mContext.getSharedPreferences("PREFS", 0);
@@ -227,9 +228,11 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                 if (!training) {
                  Log.d("Fling action down ","here"+timed.getTime());
                     if (newEntry) {
+                        //Clicking the enter SwiPIN button
                         if(newEntered==null){
 
                             orientation = (timed.getTime() - startOrientation);
+                            Log.d("FlingstartOrientation13","here"+startOrientation);
                             Logger.swipinLog("\nUser ID: " + user);
                             Log.d("Fling userID ","here"+user);
                             Logger.swipinLog("\nTime orientation: " + orientation + "ms");

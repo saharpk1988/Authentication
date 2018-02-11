@@ -205,7 +205,7 @@ public class SwipeGestureCreate extends GestureDetector.SimpleOnGestureListener 
                         act.pwdEntered(enter);
                         Logger.swipinLog("Creating SwiPIN");
                         //load the UserID
-                        user = MainActivity.user;
+                        user = SwiPINActivity.UserID;
                         Logger.swipinLog("SwiPIN for user " + user + " has been created");
                         Logger.swipinLog("SwiPIN created is : " + enter);
                         Logger.swipinLog("------------------");

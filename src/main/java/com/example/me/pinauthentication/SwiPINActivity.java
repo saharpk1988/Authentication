@@ -17,12 +17,15 @@ public class SwiPINActivity extends AppCompatActivity {
     Button button_create_SwiPIN;
     Button button_enter_SwiPIN;
     public static Date startOrientation;
+    public static String UserID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        SharedPreferences settings=getSharedPreferences("myUserID",0);
+        UserID = settings.getString("userID", "");
+        Log.d("username", "onTouch: "+UserID);
         setContentView(R.layout.activity_swi_pin);
         button_create_SwiPIN=(Button) findViewById(R.id.button_create_SwiPIN);
         button_enter_SwiPIN=(Button) findViewById(R.id.button_enter_SwiPIN);

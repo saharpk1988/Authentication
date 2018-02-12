@@ -1,5 +1,9 @@
 package com.example.me.pinauthentication;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.io.BufferedWriter;
@@ -60,6 +64,12 @@ public class EnterSwiPIN extends AppCompatActivity {
     private String logd = "";
     private String csvLog = "Orientation,Input_Time,Total_Time";
     private String csvLogd = "Action,startX,startY,endX,endY,speed,lengthX,lengthY,field";
+    ArrayList<Float> speedDetected = new ArrayList<>();
+    private SensorManager sm;
+    private float shake; // Acceleration Value differ from Gravity
+    Long lastUpdate=0L;
+    float last_x, last_y,last_z;
+
 
     int id;
     int j=4;
@@ -72,7 +82,10 @@ public class EnterSwiPIN extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_enter_swi_pin);
-
+        sm=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+        //Gravity_Earth=9.80665f (Objects, when dropped, accelerate at the rate of 9.8 m/s^2 on earth)
+        shake=SensorManager.GRAVITY_EARTH;
 
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -191,6 +204,11 @@ public class EnterSwiPIN extends AppCompatActivity {
     }
 
     public void pwdEntered(String entered) {
+        sm.unregisterListener(sensorListener);
+        Log.d("sensor speed detected", "onClick: "+speedDetected);
+        float speedAverage=SpeedAverage.average(speedDetected);
+        speedDetected.clear();
+        Log.d("sensor speedAverage", "onClick: "+speedAverage);
         Log.d("Tag1", "pwdEntered: "+incorrectInput);
         SharedPreferences settings = getSharedPreferences("PREFS", 0);
         pwd = settings.getString("password", "");
@@ -200,7 +218,7 @@ public class EnterSwiPIN extends AppCompatActivity {
         Logger.swipinLog("SwiPIN created is: " + pwd);
 
             if (!pwd.equals(entered)) {
-                Logger.swipinCsv(pwd+", false");
+                Logger.swipinCsv(pwd+", false, "+speedAverage);
                 Logger.swipinCsv("------------------");
                 Logger.swipinLog("Result is false");
                 result = false;
@@ -208,6 +226,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                 Log.d("Tag11", "pwdEntered: "+incorrectInput);
                 if(incorrectInput== 2){
                     Logger.swipinLog("Authentication try: "+(j+1));
+                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
                             .setMessage("Remaining tries: "+authentionTry+"\n"+"Incorrect SwiPIN entered three times." +"\n" + "Authentication failed."+"\n"+"Please try again!")
@@ -224,6 +243,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                 }
                 else if(j==0&&incorrectInput!=3){
                     Logger.swipinLog("Last Authentication try");
+                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
                             .setMessage("Authentication series are finished!"+"\n"+"Authentication successful." )
@@ -241,6 +261,7 @@ public class EnterSwiPIN extends AppCompatActivity {
 
                     incorrectInput += 1;
                     Logger.swipinLog("Authentication try: "+(j+1));
+                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
                     //PatternHandler.toastMessageHandler(EnterPIN.this, "Wrong password!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
@@ -252,6 +273,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                                             .setMessage("Your Password is: " + "\n" + pwd)
                                             .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int which) {
+                                                    sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                     swipeGesture.newEntry();
                                                     TextView pwdText = (TextView) findViewById(R.id.pwd);
                                                 }
@@ -262,6 +284,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                    sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                     swipeGesture.newEntry();
                                     TextView pwdText = (TextView) findViewById(R.id.pwd);
                                 }
@@ -273,13 +296,14 @@ public class EnterSwiPIN extends AppCompatActivity {
                 }
 
             } else {
-                Logger.swipinCsv(pwd+", true");
+                Logger.swipinCsv(pwd+", true, "+speedAverage);
                 Logger.swipinCsv("------------------");
                 Logger.swipinLog("Result is true");
                 result = true;
                 Log.d("Tag1", "pwdEntered: "+j);
                 if (j == 0 && incorrectInput != 3) {
                     Logger.swipinLog("Last Authentication try");
+                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Correct SwiPIN")
                             .setMessage("Authentication successful!" + "\n" + "SwiPIN entered correctly.")
@@ -293,6 +317,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                             }).setCancelable(false).show();
                 } else {
                     Logger.swipinLog("Authentication try: "+(j+1));
+                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Correct SwiPIN")
                             .setMessage("Authentications to go: " + (j) + "\n" + "See password again?")
@@ -303,6 +328,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                                             .setMessage("Your Password is: " + "\n" + pwd)
                                             .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int which) {
+                                                    sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                     swipeGesture.newEntry();
                                                     TextView pwdText = (TextView) findViewById(R.id.pwd);
                                                     pwdText.setText("");
@@ -314,6 +340,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
+                                    sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                     swipeGesture.newEntry();
                                     TextView pwdText = (TextView) findViewById(R.id.pwd);
                                     pwdText.setText("");
@@ -480,6 +507,44 @@ public class EnterSwiPIN extends AppCompatActivity {
             plusLog("\nWrong Gesture entered. Correct Gesture for " + trueNumber + " is " + image.getTag() + ".");
         }
     }
+
+
+    private final SensorEventListener sensorListener= new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            long curTime = System.currentTimeMillis();
+
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = sensorEvent.values[0];
+                float y = sensorEvent.values[1];
+                float z = sensorEvent.values[2];
+
+                //speed= distance/time distance=(xNew-xLast)
+                float speed = Math.abs(x+y+z - last_x - last_y - last_z) / diffTime * 10000;
+
+                if (speed > shake) {
+
+                    Log.d("sensor", "shake detected w/ speed: " + speed);
+                    speedDetected.add(speed);
+
+
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 
     @Override
     public void onBackPressed() {

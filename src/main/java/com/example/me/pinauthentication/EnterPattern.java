@@ -1,9 +1,14 @@
 package com.example.me.pinauthentication;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -37,12 +42,21 @@ public class EnterPattern extends AppCompatActivity {
     int incorrectInput=0;
     int authentionTry=2;
     Date startOrientation;
+    ArrayList<Float> speedDetected = new ArrayList<>();
+    private SensorManager sm;
+    private float shake; // Acceleration Value differ from Gravity
+    Long lastUpdate=0L;
+    float last_x, last_y,last_z;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //load the UserID
         SharedPreferences settings = getSharedPreferences("myUserID", 0);
         UserID = settings.getString("userID", "");
+        sm=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+        //Gravity_Earth=9.80665f (Objects, when dropped, accelerate at the rate of 9.8 m/s^2 on earth)
+        shake=SensorManager.GRAVITY_EARTH;
         setContentView(R.layout.activity_enter_pattern);
         final PatternLockView mPatternLockViewEnter;
         Button enterPattern = findViewById(R.id.btnEnterPattern);
@@ -89,6 +103,11 @@ public class EnterPattern extends AppCompatActivity {
         enterPattern.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sm.unregisterListener(sensorListener);
+                Log.d("sensor speed detected", "onClick: "+speedDetected);
+                float speedAverage=SpeedAverage.average(speedDetected);
+                speedDetected.clear();
+                Log.d("sensor speedAverage", "onClick: "+speedAverage);
                 //List<Integer> myConfirmList = ConfirmPattern.getMyConfirmList();
                 TinyDB tinydb = new TinyDB(EnterPattern.this);
                 final List<Integer> myConfirmList = tinydb.getListInt("password");
@@ -103,6 +122,7 @@ public class EnterPattern extends AppCompatActivity {
                     //Last Authentication try when entering correct password
                     if(j==0&& incorrectInput!=3){
                         Logger.patternLog("Last Authentication try");
+                        Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Correct Pattern")
                                 .setMessage("Authentication successful!"+"\n"+"Pattern entered correctly." )
@@ -117,6 +137,7 @@ public class EnterPattern extends AppCompatActivity {
 
                     } else{
                         Logger.patternLog("Authentication try: "+(j+1));
+                        Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Correct Pattern")
                                 .setMessage("Authentications to go: " + (j) + "\n" + "See password again?")
@@ -127,6 +148,7 @@ public class EnterPattern extends AppCompatActivity {
                                                 .setMessage("Your Password is: "+"\n"+myConfirmList+"\n"+"\n"+ Arrays.deepToString(ShowPattern.showPat(myConfirmList)).replace("], ", "\n").replace("[, ", "").replace("[[", "").replace("]]", "").replace(",", "").replace("[", ""))
                                                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int which) {
+                                                        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                         startOrientation = new Date();
                                                         SharedPreferences settings=getSharedPreferences("PREFS",0);
                                                         SharedPreferences.Editor editor= settings.edit();
@@ -142,6 +164,7 @@ public class EnterPattern extends AppCompatActivity {
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+                                        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                         startOrientation = new Date();
                                         SharedPreferences settings=getSharedPreferences("PREFS",0);
                                         SharedPreferences.Editor editor= settings.edit();
@@ -155,7 +178,7 @@ public class EnterPattern extends AppCompatActivity {
                         j -= 1;
                     Result = true;
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + ", " + FirstOrientation + ", " + (endTime.getTime() - startTime.getTime()) + ", " + myConfirmList + ", " + myEnteredList + ", " + Result);
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + (endTime.getTime() - startTime.getTime()) + ", " + myConfirmList + ", " + myEnteredList + ", " + Result);
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
 
@@ -171,12 +194,13 @@ public class EnterPattern extends AppCompatActivity {
                     Logger.patternLog("Result is false");
                      Result = false;
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + ", " + FirstOrientation + ", " + (endTime.getTime() - startTime.getTime()) + ", " + myConfirmList + ", " + myEnteredList + ", " + Result);
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + (endTime.getTime() - startTime.getTime()) + ", " + myConfirmList + ", " + myEnteredList + ", " + Result);
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
                     //Wrong password entered three times
                     if(incorrectInput== 2){
                         Logger.patternLog("Authentication try: "+(j+1));
+                        Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
                                 .setMessage("Remaining tries: "+authentionTry+"\n"+"Incorrect pattern entered three times." +"\n" + "Authentication failed."+"\n"+"Please try again!")
@@ -193,6 +217,7 @@ public class EnterPattern extends AppCompatActivity {
                     }
                     else if(j==0&&incorrectInput!=3){
                         Logger.patternLog("Last Authentication try");
+                        Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
                                 .setMessage("Authentication series are finished!"+"\n"+"Authentication successful." )
@@ -210,6 +235,7 @@ public class EnterPattern extends AppCompatActivity {
                         //Authentication try when entering wrong password
                         incorrectInput += 1;
                         Logger.patternLog("Authentication try: "+(j+1));
+                        Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
                         //PatternHandler.toastMessageHandler(EnterPIN.this, "Wrong password!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
@@ -221,6 +247,7 @@ public class EnterPattern extends AppCompatActivity {
                                                 .setMessage("Your Password is: "+"\n"+myConfirmList+"\n"+"\n"+ Arrays.deepToString(ShowPattern.showPat(myConfirmList)).replace("], ", "\n").replace("[, ", "").replace("[[", "").replace("]]", "").replace(",", "").replace("[", ""))
                                                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                                     public void onClick(DialogInterface dialog, int which) {
+                                                        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                         startOrientation = new Date();
                                                         SharedPreferences settings=getSharedPreferences("PREFS",0);
                                                         SharedPreferences.Editor editor= settings.edit();
@@ -236,6 +263,7 @@ public class EnterPattern extends AppCompatActivity {
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+                                        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                         startOrientation = new Date();
                                         SharedPreferences settings=getSharedPreferences("PREFS",0);
                                         SharedPreferences.Editor editor= settings.edit();
@@ -263,7 +291,42 @@ public class EnterPattern extends AppCompatActivity {
 
 
     }
+    private final SensorEventListener sensorListener= new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            long curTime = System.currentTimeMillis();
 
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = sensorEvent.values[0];
+                float y = sensorEvent.values[1];
+                float z = sensorEvent.values[2];
+
+                //speed= distance/time distance=(xNew-xLast)
+                float speed = Math.abs(x+y+z - last_x - last_y - last_z) / diffTime * 10000;
+
+                if (speed > shake) {
+
+                    Log.d("sensor", "shake detected w/ speed: " + speed);
+                    speedDetected.add(speed);
+
+
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
     //Enable Hardware Back Button
     @Override
     public void onBackPressed() {

@@ -53,7 +53,6 @@ public final class Logger {
         }
     }
 
-
     public static void patternLog(String text) {
 
         File targetPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);

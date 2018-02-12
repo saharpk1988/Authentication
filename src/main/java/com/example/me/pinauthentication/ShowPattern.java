@@ -19,38 +19,38 @@ public class ShowPattern {
            String[][]newArr= new String[3][3];
             //Iterate through the arraylist
             if(arr.contains(1)){
-                newArr[0][0]="1"+"\t"+"\t";
+                newArr[0][0]="1 "+"\t";
                 }
             if(arr.contains(2)){
-                newArr[0][1]="2"+"\t"+"\t";
+                newArr[0][1]="2 "+"\t";
 
                 }
             if(arr.contains(3)){
-                newArr[0][2]="3"+"\t"+"\t";
+                newArr[0][2]="3 "+"\t";
 
                  }
             if(arr.contains(4)){
-                newArr[1][0]="4"+"\t"+"\t";
+                newArr[1][0]="4 "+"\t";
 
                 }
             if(arr.contains(5)){
-                newArr[1][1]="5"+"\t"+"\t";
+                newArr[1][1]="5 "+"\t";
 
                 }
              if(arr.contains(6)){
-                newArr[1][2]="6"+"\t"+"\t";
+                newArr[1][2]="6 "+"\t";
 
                 }
              if(arr.contains(7)){
-                 newArr[2][0]="7"+"\t"+"\t";
+                 newArr[2][0]="7 "+"\t";
 
                 }
              if(arr.contains(8)){
-                 newArr[2][1]="8"+"\t"+"\t";
+                 newArr[2][1]="8 "+"\t";
 
                 }
             if(arr.contains(9)){
-                 newArr[2][2]="9"+"\t"+"\t";
+                 newArr[2][2]="9 "+"\t";
 
                 }
         for (int row = 0; row < newArr.length; row++) {

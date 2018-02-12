@@ -1,6 +1,10 @@
 package com.example.me.pinauthentication;
 
 import android.annotation.SuppressLint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -67,6 +71,11 @@ public class EnterPIN extends AppCompatActivity {
     ArrayList<String> enteredCharacters = new ArrayList<>();
     ArrayList<String> deletedCharacters = new ArrayList<>();
     ArrayList<String> enteredAndDeleted = new ArrayList<>();
+    ArrayList<Float> speedDetected = new ArrayList<>();
+    private SensorManager sm;
+    private float shake; // Acceleration Value differ from Gravity
+    Long lastUpdate=0L;
+    float last_x, last_y,last_z;
 
 
 
@@ -77,6 +86,7 @@ public class EnterPIN extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_pin);
 
+
         //load the password
         SharedPreferences settings = getSharedPreferences("PREFS", 0);
         password = settings.getString("password", "");
@@ -84,6 +94,12 @@ public class EnterPIN extends AppCompatActivity {
         SharedPreferences setting = getSharedPreferences("myUserID", 0);
         UserID = setting.getString("userID", "");
         user=UserID;
+        sm=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+        //Gravity_Earth=9.80665f (Objects, when dropped, accelerate at the rate of 9.8 m/s^2 on earth)
+        shake=SensorManager.GRAVITY_EARTH;
+
+
 
 
         editText = (EditText) findViewById(R.id.editText);
@@ -275,6 +291,12 @@ public class EnterPIN extends AppCompatActivity {
             ok.setOnClickListener(new View.OnClickListener() {
                                       @Override
                                       public void onClick(View view) {
+
+                                          sm.unregisterListener(sensorListener);
+                                          Log.d("sensor speedtectedde", "onClick: "+speedDetected);
+                                          float speedAverage=SpeedAverage.average(speedDetected);
+                                          speedDetected.clear();
+                                          Log.d("sensor speedAverage", "onClick: "+speedAverage);
                                           String text = editText.getText().toString();
                                           if (!text.isEmpty()) {
                                               Date endTime = new Date();
@@ -290,7 +312,7 @@ public class EnterPIN extends AppCompatActivity {
                                                   Logger.writeFile("Deleted numbers during correction: " + deletedCharacters);
                                                   Log.d("Test3", "deleted " + deletedCharacters);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Orientation Time, Total Time, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + ", " + FirstOrientation + ", " + total + ", " + durationDeleteKey + ", " + password + ", " + enteredCharacters + ", " + deletedCharacters+", ");
+                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + total + ", " + durationDeleteKey + ", " + password + ", " + enteredCharacters + ", " + deletedCharacters+", ");
 
 
                                               } else {
@@ -302,7 +324,7 @@ public class EnterPIN extends AppCompatActivity {
                                                   Logger.writeFile("PIN created is: " + password);
                                                   Logger.writeFile("PIN entered is: " + enteredCharacters);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Orientation Time, Total Time, Pin Created, Pin Entered, Result: " + "\n" + UserID + ", " + FirstOrientation + ", " + total + ", " + password + ", " + enteredCharacters+", ");
+                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pin Created, Pin Entered, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + total + ", " + password + ", " + enteredCharacters+", ");
 
 
                                               }
@@ -312,6 +334,8 @@ public class EnterPIN extends AppCompatActivity {
                                                   //Last Authentication try when entering correct password
                                                   if (j == 0 && incorrectInput != 3) {
                                                       Logger.writeFile("Last Authentication try");
+                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
+
 
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Correct PIN")
                                                               .setMessage("Authentication successful!" + "\n" + "PIN entered correctly.")
@@ -327,6 +351,9 @@ public class EnterPIN extends AppCompatActivity {
 
                                                   } else {
                                                       Logger.writeFile("Authentication try: " + (j + 1));
+                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
+
+
 
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Correct PIN")
                                                               .setMessage("Authentications to go: " + (j) + "\n" + "See password again?")
@@ -337,6 +364,7 @@ public class EnterPIN extends AppCompatActivity {
                                                                               .setMessage("Your Password is: " + "\n" + password)
                                                                               .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                                                                   public void onClick(DialogInterface dialog, int which) {
+                                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                                                       isCorrected=false;
                                                                                       durationDeleteKey=0;
                                                                                       startOrientation = new Date();
@@ -360,6 +388,7 @@ public class EnterPIN extends AppCompatActivity {
                                                               })
                                                               .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                                                   public void onClick(DialogInterface dialog, int which) {
+                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                                       isCorrected=false;
                                                                       durationDeleteKey=0;
                                                                       startOrientation = new Date();
@@ -393,6 +422,8 @@ public class EnterPIN extends AppCompatActivity {
 
                                                   if (incorrectInput == 2) {
                                                       Logger.writeFile("Authentication try: " + (j + 1));
+                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
+
 
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
                                                               .setMessage("Remaining tries: " + authentionTry + "\n" + "Incorrect PIN entered three times." + "\n" + "Authentication failed." + "\n" + "Please try again!")
@@ -408,7 +439,7 @@ public class EnterPIN extends AppCompatActivity {
                                                               }).setCancelable(false).show();
                                                   } else if(j==0&&incorrectInput!=3){
                                                       Logger.writeFile("Last Authentication try");
-                                                      Logger.writeFile("------------------");
+                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
                                                               .setMessage("Authentication series are finished!"+"\n"+"Authentication successful." )
                                                               .setCancelable(false)
@@ -425,6 +456,7 @@ public class EnterPIN extends AppCompatActivity {
                                                       //Authentication try when entering wrong password
                                                       incorrectInput += 1;
                                                       Logger.writeFile("Authentication try: " + (j + 1));
+                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
 
                                                       //PatternHandler.toastMessageHandler(EnterPIN.this, "Wrong password!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
@@ -436,6 +468,7 @@ public class EnterPIN extends AppCompatActivity {
                                                                               .setMessage("Your Password is: " + "\n" + password)
                                                                               .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                                                                                   public void onClick(DialogInterface dialog, int which) {
+                                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                                                       isCorrected=false;
                                                                                       durationDeleteKey=0;
                                                                                       startOrientation = new Date();
@@ -460,6 +493,7 @@ public class EnterPIN extends AppCompatActivity {
                                                               })
                                                               .setNegativeButton("No", new DialogInterface.OnClickListener() {
                                                                   public void onClick(DialogInterface dialog, int which) {
+                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                                       isCorrected=false;
                                                                       durationDeleteKey=0;
                                                                       startOrientation = new Date();
@@ -495,7 +529,7 @@ public class EnterPIN extends AppCompatActivity {
                                                       .setMessage("Please enter your password!")
                                                       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                           public void onClick(DialogInterface dialog, int which) {
-
+                                                              sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                           }
                                                       }).setCancelable(false).show();
 
@@ -510,6 +544,43 @@ public class EnterPIN extends AppCompatActivity {
         }
 
     }
+
+    private final SensorEventListener sensorListener= new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            long curTime = System.currentTimeMillis();
+
+            // only allow one update every 100ms.
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = sensorEvent.values[0];
+                float y = sensorEvent.values[1];
+                float z = sensorEvent.values[2];
+
+                //speed= distance/time distance=(xNew-xLast)
+                float speed = Math.abs(x+y+z - last_x - last_y - last_z) / diffTime * 10000;
+
+                if (speed > shake) {
+
+                    Log.d("sensor", "shake detected w/ speed: " + speed);
+                    speedDetected.add(speed);
+
+
+                }
+                last_x = x;
+                last_y = y;
+                last_z = z;
+            }
+        }
+
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    };
 
     public void handleEvent(EditText editText,Button button) {
 

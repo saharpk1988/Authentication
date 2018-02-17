@@ -34,14 +34,14 @@ public class CreatePIN extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_pin);
 
-        editText1= (EditText) findViewById(R.id.editText1);
-        editText2= (EditText) findViewById(R.id.editText2);
-        button= (Button) findViewById(R.id.button);
+        editText1= findViewById(R.id.editText1);
+        editText2= findViewById(R.id.editText2);
+        button= findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final String text1=editText1.getText().toString();
+                String text1=editText1.getText().toString();
                 String text2=editText2.getText().toString();
 
                 if(text1.equals("")&& text2.equals("")){
@@ -82,10 +82,11 @@ public class CreatePIN extends AppCompatActivity {
                             SharedPreferences setting=getSharedPreferences("myUserID",0);
                             UserID = setting.getString("userID", "");
                             //save the password
-                            SharedPreferences settings=getSharedPreferences("PREFS",0);
+                            SharedPreferences settings=getSharedPreferences("pass",0);
                             SharedPreferences.Editor editor= settings.edit();
-                            editor.putString("password",text1);
+                            editor.putString("pinpassword",text1);
                             editor.apply();
+                            editor.commit();
                             startOrientation = new Date();
                             SharedPreferences set=getSharedPreferences("PREFS",0);
                             SharedPreferences.Editor editorNew= set.edit();

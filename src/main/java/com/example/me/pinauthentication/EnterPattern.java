@@ -178,7 +178,7 @@ public class EnterPattern extends AppCompatActivity {
                         j -= 1;
                     Result = true;
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + (endTime.getTime() - startTime.getTime()) + ", " + myConfirmList + ", " + myEnteredList + ", " + Result);
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + (endTime.getTime() - startTime.getTime()) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result);
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
 
@@ -194,7 +194,7 @@ public class EnterPattern extends AppCompatActivity {
                     Logger.patternLog("Result is false");
                      Result = false;
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + (endTime.getTime() - startTime.getTime()) + ", " + myConfirmList + ", " + myEnteredList + ", " + Result);
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + (endTime.getTime() - startTime.getTime()) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result);
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
                     //Wrong password entered three times

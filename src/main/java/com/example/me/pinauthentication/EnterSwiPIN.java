@@ -211,14 +211,14 @@ public class EnterSwiPIN extends AppCompatActivity {
         Log.d("sensor speedAverage", "onClick: "+speedAverage);
         Log.d("Tag1", "pwdEntered: "+incorrectInput);
         SharedPreferences settings = getSharedPreferences("PREFS", 0);
-        pwd = settings.getString("password", "");
-        created=settings.getString("password", "");
+        pwd = settings.getString("passwordSwiPIN", "");
+        created=settings.getString("passwordSwiPIN", "");
         Log.d("password1", "entered password " + entered);
         Log.d("password2", "entered password " + pwd);
         Logger.swipinLog("SwiPIN created is: " + pwd);
 
             if (!pwd.equals(entered)) {
-                Logger.swipinCsv(pwd+", false, "+speedAverage);
+                Logger.swipinCsv(pwd+"- false- "+speedAverage);
                 Logger.swipinCsv("------------------");
                 Logger.swipinLog("Result is false");
                 result = false;
@@ -296,7 +296,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                 }
 
             } else {
-                Logger.swipinCsv(pwd+", true, "+speedAverage);
+                Logger.swipinCsv(pwd+"- true- "+speedAverage);
                 Logger.swipinCsv("------------------");
                 Logger.swipinLog("Result is true");
                 result = true;

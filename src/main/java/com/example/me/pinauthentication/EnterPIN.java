@@ -88,8 +88,8 @@ public class EnterPIN extends AppCompatActivity {
 
 
         //load the password
-        SharedPreferences settings = getSharedPreferences("PREFS", 0);
-        password = settings.getString("password", "");
+        SharedPreferences settings=getSharedPreferences("pass",0);
+        password = settings.getString("pinpassword", "");
         //load the UserID
         SharedPreferences setting = getSharedPreferences("myUserID", 0);
         UserID = setting.getString("userID", "");
@@ -312,7 +312,7 @@ public class EnterPIN extends AppCompatActivity {
                                                   Logger.writeFile("Deleted numbers during correction: " + deletedCharacters);
                                                   Log.d("Test3", "deleted " + deletedCharacters);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + total + ", " + durationDeleteKey + ", " + password + ", " + enteredCharacters + ", " + deletedCharacters+", ");
+                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + total + "- " + durationDeleteKey + "- " + password + "- " + enteredCharacters + "- " + deletedCharacters+"- ");
 
 
                                               } else {
@@ -324,7 +324,7 @@ public class EnterPIN extends AppCompatActivity {
                                                   Logger.writeFile("PIN created is: " + password);
                                                   Logger.writeFile("PIN entered is: " + enteredCharacters);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pin Created, Pin Entered, Result: " + "\n" + UserID + ", "+speedAverage+", " + FirstOrientation + ", " + total + ", " + password + ", " + enteredCharacters+", ");
+                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pin Created, Pin Entered, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + total + "- " + password + "- " + enteredCharacters+"- ");
 
 
                                               }

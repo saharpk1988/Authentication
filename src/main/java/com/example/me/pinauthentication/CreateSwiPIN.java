@@ -163,7 +163,7 @@ public class CreateSwiPIN extends AppCompatActivity {
         //save the password
         SharedPreferences settings=getSharedPreferences("PREFS",0);
         SharedPreferences.Editor editor= settings.edit();
-        editor.putString("password",entered1);
+        editor.putString("passwordSwiPIN",entered1);
         editor.apply();
         editor.commit();
         pwd=entered1;

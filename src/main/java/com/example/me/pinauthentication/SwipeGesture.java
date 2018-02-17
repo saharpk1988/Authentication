@@ -408,12 +408,12 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                             Logger.swipinLog("\nClear is clicked");
                             Logger.swipinLog("\nPassword entered and deleted" + deletedNumbers);
                             Log.d("Fling cleared", "Password entered and deleted" + deletedNumbers);
-                            Logger.swipinCsv("UserID, Orientation Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Result, Average Motion Shake: " + "\n" + user + ", " + orientation + ", "+ total + ", true"+ ", "+ enter + ", ");
+                            Logger.swipinCsv("UserID, Orientation Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+ total + "- true"+ "- "+ enter + "- ");
 
 
                         }
                         else{
-                            Logger.swipinCsv("UserID, Orientation Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Result, Average Motion Shake: " + "\n" + user + ", " + orientation + ", "+ total + ", false"+ ", "+ enter +", " );
+                            Logger.swipinCsv("UserID, Orientation Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+ total + "- false"+ "- "+ enter +"- " );
 
                         }
                         act.pwdEntered(enter);

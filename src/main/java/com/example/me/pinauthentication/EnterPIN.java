@@ -10,33 +10,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
-import android.os.Build;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
-import android.text.Selection;
-import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Date;
 
 public class EnterPIN extends AppCompatActivity {
@@ -64,9 +48,10 @@ public class EnterPIN extends AppCompatActivity {
     boolean isCorrected = false;
     String UserID;
     public static String user;
-    int j=4;
-    int incorrectInput=0;
-    int authentionTry=2;
+    int authentionTry=5;
+    int remainingTry=3;
+    int authenticationNr;
+    int nrFailedAuthentication=0;
     Date startOrientation;
     ArrayList<String> enteredCharacters = new ArrayList<>();
     ArrayList<String> deletedCharacters = new ArrayList<>();
@@ -287,8 +272,7 @@ public class EnterPIN extends AppCompatActivity {
             del.setEnabled(false);
         }
 
-        for (int i=1;i<6;i++) {
-            ok.setOnClickListener(new View.OnClickListener() {
+        ok.setOnClickListener(new View.OnClickListener() {
                                       @Override
                                       public void onClick(View view) {
 
@@ -301,96 +285,56 @@ public class EnterPIN extends AppCompatActivity {
                                           if (!text.isEmpty()) {
                                               Date endTime = new Date();
                                               if (isCorrected) {
-                                                  long total = endTime.getTime() - startTime.getTime();
+                                                  long total = ((endTime.getTime() - startTime.getTime())+FirstOrientation);
                                                   //Logger.writeFile("User ID is: " + counter);
                                                   Logger.writeFile("PIN entry start time is: " + startTime);
                                                   Logger.writeFile("PIN entry end time is: " + endTime);
+                                                  Logger.writeFile("PIN entry time: " + (endTime.getTime() - startTime.getTime()));
                                                   Logger.writeFile("Total PIN entry time with correction times is: " + total);
                                                   Logger.writeFile("Correction time is: " + durationDeleteKey);
                                                   Logger.writeFile("PIN created is: " + password);
                                                   Logger.writeFile("PIN entered is: " + enteredCharacters);
                                                   Logger.writeFile("Deleted numbers during correction: " + deletedCharacters);
-                                                  Log.d("Test3", "deleted " + deletedCharacters);
+                                                  Log.d("PIN Deleted", "deleted " + deletedCharacters);
+                                                  Log.d("PIN Orientation", "onComplete: "+ FirstOrientation);
+                                                  Log.d("PIN Total", "onComplete: "+ total);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + total + "- " + durationDeleteKey + "- " + password + "- " + enteredCharacters + "- " + deletedCharacters+"- ");
+                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Authentication try, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "-" + (endTime.getTime() - startTime.getTime()) + "- " + total + "- " + authentionTry + "-" + durationDeleteKey + "- " + password + "- " + enteredCharacters + "- " + deletedCharacters + "- ");
 
 
                                               } else {
-                                                  long total = endTime.getTime() - startTime.getTime();
+                                                  long total = ((endTime.getTime() - startTime.getTime()) + FirstOrientation);
                                                   //Logger.writeFile("User ID is: " + counter);
                                                   Logger.writeFile("PIN entry start time is: " + startTime);
                                                   Logger.writeFile("PIN entry end time is: " + endTime);
+                                                  Logger.writeFile("PIN entry time: " + (endTime.getTime() - startTime.getTime()));
                                                   Logger.writeFile("Total PIN entry time without correction: " + total);
                                                   Logger.writeFile("PIN created is: " + password);
                                                   Logger.writeFile("PIN entered is: " + enteredCharacters);
+                                                  Log.d("Pattern Orientation", "onComplete: "+ FirstOrientation);
+                                                  Log.d("Pattern Total", "onComplete: "+ total);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pin Created, Pin Entered, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + total + "- " + password + "- " + enteredCharacters+"- ");
+                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Authentication try, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "-" + (endTime.getTime() - startTime.getTime()) + "- " + total + "-" + authentionTry + "-" + "0" + "- " + password + "- " + enteredCharacters + "- " + "[]" + "- ");
 
 
                                               }
 
                                               Log.d("Test4", "Pass is: " + text);
                                               if (text.equals(password)) {
-                                                  //Last Authentication try when entering correct password
-                                                  if (j == 0 && incorrectInput != 3) {
-                                                      Logger.writeFile("Last Authentication try");
-                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
-
-
+                                                  //Its not the last authentication try
+                                                  if (authentionTry != 1) {
+                                                      authentionTry -= 1;
+                                                      remainingTry = 3;
+                                                      Logger.writeFile("Authentications to go: " + (authentionTry + 1));
+                                                      Logger.writeFile("Average Speed detected is: " + speedAverage);
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Correct PIN")
-                                                              .setMessage("Authentication successful!" + "\n" + "PIN entered correctly.")
+                                                              .setMessage("Authentications to go: " + authentionTry)
                                                               .setCancelable(false)
                                                               .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                                                   public void onClick(DialogInterface dialog, int which) {
-                                                                      Intent intent = new Intent(getApplicationContext(), PINActivity.class);
-                                                                      startActivity(intent);
-                                                                      finish();
-                                                                  }
-                                                              }).setCancelable(false).show();
-
-
-                                                  } else {
-                                                      Logger.writeFile("Authentication try: " + (j + 1));
-                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
-
-
-
-                                                      new AlertDialog.Builder(EnterPIN.this).setTitle("Correct PIN")
-                                                              .setMessage("Authentications to go: " + (j) + "\n" + "See password again?")
-                                                              .setCancelable(false)
-                                                              .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                                                  public void onClick(DialogInterface dialog, int which) {
-                                                                      new AlertDialog.Builder(EnterPIN.this).setTitle("View Password")
-                                                                              .setMessage("Your Password is: " + "\n" + password)
-                                                                              .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                                                                                  public void onClick(DialogInterface dialog, int which) {
-                                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
-                                                                                      isCorrected=false;
-                                                                                      durationDeleteKey=0;
-                                                                                      startOrientation = new Date();
-                                                                                      SharedPreferences settings = getSharedPreferences("PREFS", 0);
-                                                                                      SharedPreferences.Editor editor = settings.edit();
-                                                                                      editor.putLong("startOrientation", startOrientation.getTime());
-                                                                                      editor.apply();
-                                                                                      editText.removeTextChangedListener(textWatcher);
-                                                                                      editText.clearFocus();
-                                                                                      editText.setText("");
-                                                                                      startFlag=true;
-                                                                                      editText.addTextChangedListener(textWatcher);
-                                                                                      deletedCharacters.clear();
-                                                                                      enteredAndDeleted.clear();
-                                                                                      enteredCharacters.clear();
-                                                                                  }
-                                                                              }).setCancelable(false).show();
-
-
-                                                                  }
-                                                              })
-                                                              .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                                                  public void onClick(DialogInterface dialog, int which) {
-                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
-                                                                      isCorrected=false;
-                                                                      durationDeleteKey=0;
+                                                                      sm.registerListener(sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+                                                                      isCorrected = false;
+                                                                      durationDeleteKey = 0;
                                                                       startOrientation = new Date();
                                                                       SharedPreferences settings = getSharedPreferences("PREFS", 0);
                                                                       SharedPreferences.Editor editor = settings.edit();
@@ -406,61 +350,76 @@ public class EnterPIN extends AppCompatActivity {
                                                                       enteredCharacters.clear();
                                                                   }
                                                               }).setCancelable(false).show();
-
-                                                      j -= 1;
                                                   }
-
-                                                  result = true;
-                                                  Logger.writeFile("Result is true");
-                                                  Logger.writeFile("------------------");
-                                                  Logger.pinCsv("true");
-                                                  Logger.pinCsv("------------------");
-
-
-
-                                              } else {
-
-                                                  if (incorrectInput == 2) {
-                                                      Logger.writeFile("Authentication try: " + (j + 1));
-                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
-
-
-                                                      new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
-                                                              .setMessage("Remaining tries: " + authentionTry + "\n" + "Incorrect PIN entered three times." + "\n" + "Authentication failed." + "\n" + "Please try again!")
+                                                  //If result is true and its the last authentication try
+                                                  else if (authentionTry == 1) {
+                                                      authentionTry -= 1;
+                                                      Logger.writeFile("No more authentications to go. Authentication series is finished.");
+                                                      Logger.writeFile("Average Speed detected is: " + speedAverage);
+                                                      Logger.writeFile("Number of failed authentications for this user: " + nrFailedAuthentication);
+                                                      new AlertDialog.Builder(EnterPIN.this).setTitle("Correct PIN")
+                                                              .setMessage("Last authentication try. Authentication series finished.")
                                                               .setCancelable(false)
                                                               .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                                                   public void onClick(DialogInterface dialog, int which) {
-                                                                      Intent intent = new Intent(getApplicationContext(), PINActivity.class);
+                                                                      Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                                                       startActivity(intent);
                                                                       finish();
-
-
                                                                   }
                                                               }).setCancelable(false).show();
-                                                  } else if(j==0&&incorrectInput!=3){
-                                                      Logger.writeFile("Last Authentication try");
+                                                  }
+                                                  Logger.writeFile("Result is true");
+                                                  Logger.writeFile("------------------");
+                                                  Logger.pinCsv("true"+"\n");
+                                                  Logger.pinCsv("------------------"+"\n");
+
+                                              }
+
+                                                  //If result is not true
+                                                  else{
+                                                  remainingTry-=1;
+                                                  //Its not the last remaining try
+                                                  if(remainingTry!=0){
+                                                      Logger.writeFile("Authentication try: "+authentionTry);
+                                                      Logger.writeFile("Remaining try for this authentication: "+ remainingTry);
                                                       Logger.writeFile("Average Speed detected is: "+speedAverage);
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
-                                                              .setMessage("Authentication series are finished!"+"\n"+"Authentication successful." )
+                                                              .setMessage("Authentications to go: "+authentionTry+"\n"+"Tries for this authentication left: "+remainingTry)
                                                               .setCancelable(false)
                                                               .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                                                   public void onClick(DialogInterface dialog, int which) {
-                                                                      Intent intent = new Intent(getApplicationContext(), PINActivity.class);
-                                                                      startActivity(intent);
-                                                                      finish();}
+                                                                      sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+                                                                      isCorrected=false;
+                                                                      durationDeleteKey=0;
+                                                                      startOrientation = new Date();
+                                                                      SharedPreferences settings = getSharedPreferences("PREFS", 0);
+                                                                      SharedPreferences.Editor editor = settings.edit();
+                                                                      editor.putLong("startOrientation", startOrientation.getTime());
+                                                                      editor.apply();
+                                                                      editText.removeTextChangedListener(textWatcher);
+                                                                      editText.clearFocus();
+                                                                      editText.setText("");
+                                                                      editText.clearFocus();
+                                                                      startFlag = true;
+                                                                      editText.addTextChangedListener(textWatcher);
+                                                                      deletedCharacters.clear();
+                                                                      enteredAndDeleted.clear();
+                                                                      enteredCharacters.clear();
+                                                                  }
                                                               }).setCancelable(false).show();
-
-
                                                   }
-                                                  else {
-                                                      //Authentication try when entering wrong password
-                                                      incorrectInput += 1;
-                                                      Logger.writeFile("Authentication try: " + (j + 1));
+                                                  //If its last remaining try for this authentication try and its not the last authentication
+                                                  else if(remainingTry==0&&authentionTry!=1){
+                                                      nrFailedAuthentication+=1;
+                                                      Logger.writeFile("Authentication try: "+authentionTry);
+                                                      Logger.writeFile("Remaining try for this authentication: "+ remainingTry);
+                                                      Logger.writeFile("Authentication for this try failed.");
                                                       Logger.writeFile("Average Speed detected is: "+speedAverage);
-
-                                                      //PatternHandler.toastMessageHandler(EnterPIN.this, "Wrong password!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
+                                                      remainingTry=3;
+                                                      authentionTry-=1;
+                                                      authenticationNr=authentionTry+1;
                                                       new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
-                                                              .setMessage("Authentications to go: " + (j) + "\n" + "Remaining tries: " + authentionTry + "\n" + "See password again?")
+                                                              .setMessage("Authentications to go: "+authentionTry+"\n"+"Previous authentication try failed."+"\n"+ "See password again?")
                                                               .setCancelable(false)
                                                               .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                                   public void onClick(DialogInterface dialog, int which) {
@@ -489,6 +448,7 @@ public class EnterPIN extends AppCompatActivity {
                                                                               }).setCancelable(false).show();
 
 
+
                                                                   }
                                                               })
                                                               .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -503,7 +463,8 @@ public class EnterPIN extends AppCompatActivity {
                                                                       editor.apply();
                                                                       editText.removeTextChangedListener(textWatcher);
                                                                       editText.clearFocus();
-                                                                      editText.getText().clear();
+                                                                      editText.setText("");
+                                                                      editText.clearFocus();
                                                                       startFlag = true;
                                                                       editText.addTextChangedListener(textWatcher);
                                                                       deletedCharacters.clear();
@@ -511,22 +472,40 @@ public class EnterPIN extends AppCompatActivity {
                                                                       enteredCharacters.clear();
                                                                   }
                                                               }).setCancelable(false).show();
-                                                      authentionTry -= 1;
-                                                      Log.d("J", "onClick: " + j);
-                                                      j -= 1;
-                                                  }
 
+                                                  }
+                                                  //If its last remaining try for this authentication try and its the last authentication
+                                                  else if(remainingTry==0&&authentionTry==1){
+                                                      nrFailedAuthentication+=1;
+                                                      Logger.writeFile("Last authentication try. No more tries left for this authentication."+"\n"+"This authentication failed."+"\n"+ "Authentication series finished.");
+                                                      Logger.writeFile("Tries for this authentication left: "+ remainingTry);
+                                                      Logger.writeFile("Authentication for this try failed.");
+                                                      Logger.writeFile("Number of failed authentications for this user: "+nrFailedAuthentication);
+                                                      Logger.writeFile("Average Speed detected is: "+speedAverage);
+                                                      new AlertDialog.Builder(EnterPIN.this).setTitle("Wrong PIN")
+                                                              .setMessage("No more authentications to go."+"\n"+"This authentication failed."+"\n"+ "Authentication series finished.")
+                                                              .setCancelable(false)
+                                                              .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                                                  public void onClick(DialogInterface dialog, int which) {
+                                                                      Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                                      startActivity(intent);
+                                                                      finish();
+                                                                  }
+                                                              }).setCancelable(false).show();
+
+
+                                                  }
                                                   result = false;
                                                   Logger.writeFile("Result is false");
                                                   Logger.writeFile("------------------");
-                                                  Logger.pinCsv("false");
-                                                  Logger.pinCsv("------------------");
-
+                                                  Logger.pinCsv("false"+"\n");
+                                                  Logger.pinCsv("------------------"+"\n");
                                               }
 
-                                          } else {
+                                              }
+                                          else {
                                               new AlertDialog.Builder(EnterPIN.this).setTitle("No password entered!")
-                                                      .setMessage("Please enter your password!")
+                                                      .setMessage("Please enter your PIN!")
                                                       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                           public void onClick(DialogInterface dialog, int which) {
                                                               sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
@@ -536,12 +515,15 @@ public class EnterPIN extends AppCompatActivity {
 
                                           }
 
+
+
+
                                       }
                                   }
 
 
             );
-        }
+
 
     }
 

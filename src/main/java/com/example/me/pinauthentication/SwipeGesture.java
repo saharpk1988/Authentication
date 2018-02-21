@@ -51,6 +51,7 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
     Boolean result;
     String created;
     long total;
+    long entry;
     Context context;
     SharedPreferences pref;
 
@@ -392,10 +393,13 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                             endTime=new Date();
                             Logger.swipinLog("PIN entry end time is: " + endTime);
                             Log.d("Fling endTime ","here"+ endTime);
-                            total=(endTime.getTime()-startTime.getTime());
+                            total=((endTime.getTime()-startTime.getTime())+orientation);
+                            entry=(endTime.getTime()-startTime.getTime());
+
                             Log.d("Fling totalTime ","here"+ total);
                             Logger.swipinLog("PIN entry total time is: " + total);
-                        Logger.swipinLog("\nSwiPIN entered is: " + enter);
+                            Logger.swipinLog("PIN entry time is: " + entry);
+                            Logger.swipinLog("\nSwiPIN entered is: " + enter);
 
 
                         Log.d("Fling entered", "onTouch: "+enter);
@@ -408,12 +412,12 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                             Logger.swipinLog("\nClear is clicked");
                             Logger.swipinLog("\nPassword entered and deleted" + deletedNumbers);
                             Log.d("Fling cleared", "Password entered and deleted" + deletedNumbers);
-                            Logger.swipinCsv("UserID, Orientation Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+ total + "- true"+ "- "+ enter + "- ");
+                            Logger.swipinCsv("UserID, Orientation Time, Entry Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Authentication Try, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+entry+"-"+ total + "- true"+ "- "+ enter + "- ");
 
 
                         }
                         else{
-                            Logger.swipinCsv("UserID, Orientation Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+ total + "- false"+ "- "+ enter +"- " );
+                            Logger.swipinCsv("UserID, Orientation Time, Entry Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Authentication Try, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+entry+"-"+ total + "- false"+ "- "+ enter +"- " );
 
                         }
                         act.pwdEntered(enter);

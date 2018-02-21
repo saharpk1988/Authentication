@@ -91,6 +91,7 @@ public class EnterPattern extends AppCompatActivity {
                 final List<Integer> myConfirmList = tinydb.getListInt("password");
                 Logger.patternLog("Pattern entry start time: " + startTime);
                 Logger.patternLog("Pattern entry end time: " + endTime);
+                Logger.patternLog("Pattern entry time: " + (endTime.getTime() - startTime.getTime()));
                 Log.d("Pattern start", "onComplete: "+ startTime);
                 Log.d("Pattern end", "onComplete: "+ endTime);
                 Log.d("Pattern speed", "onComplete: "+ speedAverage);
@@ -146,7 +147,7 @@ public class EnterPattern extends AppCompatActivity {
                     Result = true;
                     Log.d("Pattern result", "onComplete: "+ Result);
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "- " + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ (authentionTry+1));
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "- "+(endTime.getTime() - startTime.getTime())+"-" + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ (authentionTry+1));
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
                 }
@@ -158,7 +159,7 @@ public class EnterPattern extends AppCompatActivity {
                     Logger.patternLog("Result is false");
                     Result = false;
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ authentionTry);
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- "+(endTime.getTime() - startTime.getTime())+"-" + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ authentionTry);
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
                     Log.d("Pattern Orientation", "onComplete: "+ FirstOrientation);

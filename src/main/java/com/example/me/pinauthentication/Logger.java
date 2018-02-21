@@ -32,6 +32,7 @@ public final class Logger {
             e.printStackTrace();
         }
     }
+
     public static void pinCsv(String text) {
 
         File targetPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
@@ -46,7 +47,6 @@ public final class Logger {
         try {
             BufferedWriter buffer = new BufferedWriter(new FileWriter(logFile, true));
             buffer.append(text);
-            buffer.newLine();
             buffer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -128,7 +128,6 @@ public final class Logger {
         try {
             BufferedWriter buffer = new BufferedWriter(new FileWriter(logFile, true));
             buffer.append(text);
-            buffer.newLine();
             buffer.close();
         } catch (IOException e) {
             e.printStackTrace();

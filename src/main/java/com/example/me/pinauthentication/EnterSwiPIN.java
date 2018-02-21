@@ -14,6 +14,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import android.content.Intent;
@@ -52,13 +54,10 @@ public class EnterSwiPIN extends AppCompatActivity {
     private static String user = "";
     private String pwd = "";
     public static String created="";
-    private int pinTraining;
-    private int completedSequences = 0;
-    private int correctPwdCount = 0;
-    private int wrongPwdCount = 0;
-    private int wrongCount = 0;
-    private int fatal = 0;
-    private long thinktime;
+    int authentionTry=5;
+    int remainingTry=3;
+    int authenticationNr;
+    int nrFailedAuthentication=0;
     public static Boolean result;
     private String log = "";
     private String logd = "";
@@ -72,10 +71,6 @@ public class EnterSwiPIN extends AppCompatActivity {
 
 
     int id;
-    int j=4;
-    int incorrectInput=0;
-    int authentionTry=2;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -209,7 +204,7 @@ public class EnterSwiPIN extends AppCompatActivity {
         float speedAverage=SpeedAverage.average(speedDetected);
         speedDetected.clear();
         Log.d("sensor speedAverage", "onClick: "+speedAverage);
-        Log.d("Tag1", "pwdEntered: "+incorrectInput);
+
         SharedPreferences setting=getSharedPreferences("confirmSwipin",0);
         pwd = setting.getString("ConfirmSwiPIN","");
         created=setting.getString("ConfirmSwiPIN","");
@@ -218,54 +213,44 @@ public class EnterSwiPIN extends AppCompatActivity {
         Logger.swipinLog("SwiPIN created is: " + pwd);
 
             if (!pwd.equals(entered)) {
-                Logger.swipinCsv(pwd+"- false- "+speedAverage);
-                Logger.swipinCsv("------------------");
+                Logger.swipinCsv(pwd+"-"+authentionTry+"- false- "+speedAverage+"\n");
+                Logger.swipinCsv("------------------"+"\n");
                 Logger.swipinLog("Result is false");
                 result = false;
                 final String p = entered;
-                Log.d("Tag11", "pwdEntered: "+incorrectInput);
-                if(incorrectInput== 2){
-                    Logger.swipinLog("Authentication try: "+(j+1));
+
+                //If result is not true
+                remainingTry-=1;
+                //Its not the last remaining try
+                if(remainingTry!=0){
+                    Logger.swipinLog("Authentication try: "+authentionTry);
+                    Logger.swipinLog("Remaining try for this authentication: "+ remainingTry);
                     Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
-                            .setMessage("Remaining tries: "+authentionTry+"\n"+"Incorrect SwiPIN entered three times." +"\n" + "Authentication failed."+"\n"+"Please try again!")
+                            .setMessage("Authentications to go: "+authentionTry+"\n"+"Tries for this authentication left: "+remainingTry)
                             .setCancelable(false)
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(getApplicationContext(), SwiPINActivity.class);
-                                    startActivity(intent);
-                                    finish();
-
-
+                                    sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+                                    swipeGesture.newEntry();
+                                    TextView pwdText = (TextView) findViewById(R.id.pwd);
                                 }
                             }).setCancelable(false).show();
                 }
-                else if(j==0&&incorrectInput!=3){
-                    Logger.swipinLog("Last Authentication try");
+                //If its last remaining try for this authentication try and its not the last authentication
+                else if(remainingTry==0&&authentionTry!=1){
+                    nrFailedAuthentication+=1;
+                    Logger.swipinLog("Authentication try: "+authentionTry);
+                    Logger.swipinLog("Remaining try for this authentication: "+ remainingTry);
+                    Logger.swipinLog("Authentication for this try failed.");
                     Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
+                    remainingTry=3;
+                    authentionTry-=1;
+                    authenticationNr=authentionTry+1;
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
-                            .setMessage("Authentication series are finished!"+"\n"+"Authentication successful." )
-                            .setCancelable(false)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(getApplicationContext(), SwiPINActivity.class);
-                                    startActivity(intent);
-                                    finish();}
-                            }).setCancelable(false).show();
-
-
-                }
-                else {
-
-                    incorrectInput += 1;
-                    Logger.swipinLog("Authentication try: "+(j+1));
-                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
-                    Logger.swipinLog("------------------");
-                    //PatternHandler.toastMessageHandler(EnterPIN.this, "Wrong password!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
-                    new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
-                            .setMessage("Authentications to go: " + (j) + "\n" + "Remaining tries: " + authentionTry + "\n" + "See password again?")
+                            .setMessage("Authentications to go: "+authentionTry+"\n"+"Previous authentication try failed."+"\n"+ "See password again?")
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
@@ -276,8 +261,10 @@ public class EnterSwiPIN extends AppCompatActivity {
                                                     sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                                     swipeGesture.newEntry();
                                                     TextView pwdText = (TextView) findViewById(R.id.pwd);
+
                                                 }
                                             }).setCancelable(false).show();
+
 
 
                                 }
@@ -289,56 +276,48 @@ public class EnterSwiPIN extends AppCompatActivity {
                                     TextView pwdText = (TextView) findViewById(R.id.pwd);
                                 }
                             }).setCancelable(false).show();
-                    authentionTry -= 1;
-                    Log.d("J", "onClick: " + j);
-                    j -= 1;
 
-                }
-
-            } else {
-                Logger.swipinCsv(pwd+"- true- "+speedAverage);
-                Logger.swipinCsv("------------------");
-                Logger.swipinLog("Result is true");
-                result = true;
-                Log.d("Tag1", "pwdEntered: "+j);
-                if (j == 0 && incorrectInput != 3) {
-                    Logger.swipinLog("Last Authentication try");
+                }  //If its last remaining try for this authentication try and its the last authentication
+                else if(remainingTry==0&&authentionTry==1){
+                    nrFailedAuthentication+=1;
+                    Logger.swipinLog("Last authentication try. No more tries left for this authentication."+"\n"+"This authentication failed."+"\n"+ "Authentication series finished.");
+                    Logger.swipinLog("Tries for this authentication left: "+ remainingTry);
+                    Logger.swipinLog("Authentication for this try failed.");
+                    Logger.swipinLog("Number of failed authentications for this user: "+nrFailedAuthentication);
                     Logger.swipinLog("Average Speed detected is: "+speedAverage);
                     Logger.swipinLog("------------------");
-                    new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Correct SwiPIN")
-                            .setMessage("Authentication successful!" + "\n" + "SwiPIN entered correctly.")
+                    new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
+                            .setMessage("No more authentications to go."+"\n"+"This authentication failed."+"\n"+ "Authentication series finished.")
                             .setCancelable(false)
                             .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(getApplicationContext(), SwiPINActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }
                             }).setCancelable(false).show();
-                } else {
-                    Logger.swipinLog("Authentication try: "+(j+1));
-                    Logger.swipinLog("Average Speed detected is: "+speedAverage);
+
+
+                }
+
+            } else {
+                //If result is true
+                Logger.swipinCsv(pwd+"-"+authentionTry+"- true- "+speedAverage+"\n");
+                Logger.swipinCsv("------------------"+"\n");
+                Logger.swipinLog("Result is true");
+                result = true;
+
+                //Its not the last authentication try
+                if (authentionTry!=1) {
+                    authentionTry -= 1;
+                    remainingTry=3;
+                    Logger.swipinLog("Authentications to go: " + (authentionTry+1));
+                    Logger.swipinLog("Average Speed detected is: " + speedAverage);
                     Logger.swipinLog("------------------");
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Correct SwiPIN")
-                            .setMessage("Authentications to go: " + (j) + "\n" + "See password again?")
+                            .setMessage("Authentications to go: " + authentionTry)
                             .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    new AlertDialog.Builder(EnterSwiPIN.this).setTitle("View Password")
-                                            .setMessage("Your Password is: " + "\n" + pwd)
-                                            .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
-                                                    swipeGesture.newEntry();
-                                                    TextView pwdText = (TextView) findViewById(R.id.pwd);
-                                                    pwdText.setText("");
-                                                }
-                                            }).setCancelable(false).show();
-
-
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
                                     swipeGesture.newEntry();
@@ -346,12 +325,24 @@ public class EnterSwiPIN extends AppCompatActivity {
                                     pwdText.setText("");
                                 }
                             }).setCancelable(false).show();
-                    Log.d("J", "onClick: " + j);
-                    j -= 1;
-
-
+                }//If result is true and its the last authentication try
+                else if (authentionTry == 1) {
+                    authentionTry -= 1;
+                    Logger.swipinLog("No more authentications to go. Authentication series is finished.");
+                    Logger.swipinLog("Average Speed detected is: " + speedAverage);
+                    Logger.swipinLog("Number of failed authentications for this user: "+nrFailedAuthentication);
+                    Logger.swipinLog("------------------");
+                    new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Correct SwiPIN")
+                            .setMessage("Last authentication try. Authentication series finished.")
+                            .setCancelable(false)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }).setCancelable(false).show();
                 }
-
             }
         }
 

@@ -1,5 +1,4 @@
 package com.example.me.pinauthentication;
-
 import android.app.Activity;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
@@ -9,16 +8,15 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.me.pinauthentication.R;
 
-public class SwipeGestureCreate extends GestureDetector.SimpleOnGestureListener implements OnTouchListener {
+public class SwipeGestureConfirm extends GestureDetector.SimpleOnGestureListener implements OnTouchListener {
     private static final int SWIPE_THRESHOLD_VELOCITY = 100;
 
     private boolean testTraining = true;
     private boolean training = true;
     public Activity activity;
-    CreateSwiPIN act;
+    ConfirmSwiPIN act;
     GestureDetector gDetector;
     static detectedGesture dGesture;
     String field;
@@ -36,11 +34,11 @@ public class SwipeGestureCreate extends GestureDetector.SimpleOnGestureListener 
         UP, RIGHT, DOWN, LEFT, DOT;
     }
 
-    public SwipeGestureCreate(CreateSwiPIN act) {
+    public SwipeGestureConfirm(ConfirmSwiPIN act) {
         this(act, null);
     }
 
-    public SwipeGestureCreate(CreateSwiPIN act, GestureDetector gDetector) {
+    public SwipeGestureConfirm(ConfirmSwiPIN act, GestureDetector gDetector) {
         if (gDetector == null)
             gDetector = new GestureDetector(act, this);
 
@@ -143,7 +141,7 @@ public class SwipeGestureCreate extends GestureDetector.SimpleOnGestureListener 
 
     private void findGesture(final String field, detectedGesture dG) {
         newEntry = false;
-        TextView pwdText = (TextView) this.activity.findViewById(R.id.pwd);
+        TextView pwdText = (TextView) this.activity.findViewById(R.id.pwd1);
         ImageView image;
 
         for (int i = 0; i <= 4; i++) {
@@ -160,7 +158,7 @@ public class SwipeGestureCreate extends GestureDetector.SimpleOnGestureListener 
             image = (ImageView) this.activity.findViewById(id);
             Log.d("ccges01", "findGesture: "+dGesture);
             Log.d("ccges02", "findGesture: "+image.getTag());
-            if (image.getTag().equals(dGesture)) {
+            if (image.getTag().toString().equals(dGesture.toString())) {
                 Log.d("ccges03", "findGesture: "+image.getTag());
                 if (field.equals("r_")) {
                     switch (i) {
@@ -237,7 +235,7 @@ public class SwipeGestureCreate extends GestureDetector.SimpleOnGestureListener 
 
     public void deleteEntry() {
         enter = "";
-        TextView pwdText = (TextView) this.activity.findViewById(R.id.pwd);
+        TextView pwdText = (TextView) this.activity.findViewById(R.id.pwd1);
         pwdText.setText(enter);
         newEntry = true;
     }

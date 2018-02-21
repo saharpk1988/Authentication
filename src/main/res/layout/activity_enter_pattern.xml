@@ -39,21 +39,5 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnEnterPattern"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/ripple_effect"
-        android:enabled="true"
-        android:fadeScrollbars="true"
-        android:filterTouchesWhenObscured="false"
-        android:fontFamily="sans-serif-condensed"
-        android:text="@string/confirm"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@android:color/background_light" />
 </android.widget.RelativeLayout>
 

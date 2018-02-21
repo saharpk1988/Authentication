@@ -13,17 +13,40 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" />
-        <activity android:name=".CreatePIN" android:label="PIN"/>
-        <activity android:name=".EnterPIN" android:label="PIN"/>
-        <activity android:name=".PINActivity" android:label="PIN"/>
-        <activity android:name=".PatternActivity" android:label="Pattern"/>
-        <activity android:name=".SwiPINActivity" android:label="SwiPIN"/>
+        <activity
+            android:name=".CreatePIN"
+            android:label="PIN" />
+        <activity
+            android:name=".EnterPIN"
+            android:label="PIN" />
+        <activity
+            android:name=".PINActivity"
+            android:label="PIN" />
+        <activity
+            android:name=".PatternActivity"
+            android:label="Pattern" />
+        <activity
+            android:name=".SwiPINActivity"
+            android:label="SwiPIN" />
         <activity android:name=".LoginSuccessful" />
-        <activity android:name=".CreatePattern" android:label="Pattern"/>
-        <activity android:name=".EnterPattern" android:label="Pattern"/>
-        <activity android:name=".EnterSwiPIN" android:label="SwiPIN"/>
-        <activity android:name=".CreateSwiPIN" android:label="SwiPIN"/>
-        <activity android:name=".ConfirmPattern" android:label="Pattern"/>
+        <activity
+            android:name=".CreatePattern"
+            android:label="Pattern" />
+        <activity
+            android:name=".EnterPattern"
+            android:label="Pattern" />
+        <activity
+            android:name=".EnterSwiPIN"
+            android:label="SwiPIN" />
+        <activity
+            android:name=".CreateSwiPIN"
+            android:label="SwiPIN" />
+        <activity
+            android:name=".ConfirmSwiPIN"
+            android:label="SwiPIN" />
+        <activity
+            android:name=".ConfirmPattern"
+            android:label="Pattern" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,8 +54,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
     </application>
 
 </manifest>

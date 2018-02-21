@@ -98,10 +98,10 @@ public final class CreatePattern extends AppCompatActivity {
                              }).setCancelable(false).show();
                     //PatternHandler.toastMessageHandler(CreatePattern.this, "No pattern entered!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
 
-                   //If there are less than 4 dots connected.
-                } else if (myList.size()<4) {
+                   //If there are less than 6 dots connected.
+                } else if (myList.size()<6) {
                      new AlertDialog.Builder(CreatePattern.this).setTitle("Wrong Pattern Input")
-                             .setMessage("You need to connect at least 4 dots!")
+                             .setMessage("You need to connect at least 6 dots!")
                              .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                  public void onClick(DialogInterface dialog, int which) {
 

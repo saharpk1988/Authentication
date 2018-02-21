@@ -210,9 +210,9 @@ public class EnterSwiPIN extends AppCompatActivity {
         speedDetected.clear();
         Log.d("sensor speedAverage", "onClick: "+speedAverage);
         Log.d("Tag1", "pwdEntered: "+incorrectInput);
-        SharedPreferences settings = getSharedPreferences("PREFS", 0);
-        pwd = settings.getString("passwordSwiPIN", "");
-        created=settings.getString("passwordSwiPIN", "");
+        SharedPreferences setting=getSharedPreferences("confirmSwipin",0);
+        pwd = setting.getString("ConfirmSwiPIN","");
+        created=setting.getString("ConfirmSwiPIN","");
         Log.d("password1", "entered password " + entered);
         Log.d("password2", "entered password " + pwd);
         Logger.swipinLog("SwiPIN created is: " + pwd);

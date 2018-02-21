@@ -5,10 +5,10 @@
     android:background="@color/black"
     android:orientation="vertical"
     android:weightSum="100"
-    tools:context="com.example.me.pinauthentication.EnterSwiPIN">
+    tools:context="com.example.me.pinauthentication.ConfirmSwiPIN">
 
     <TextView
-        android:id="@+id/pwd"
+        android:id="@+id/pwd1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="center"
@@ -17,7 +17,6 @@
         android:textColor="@color/white"
         android:textSize="24sp"
         android:maxLength="4"
-        android:inputType="numberPassword"
         android:textStyle="bold" />
 
     <RelativeLayout
@@ -138,13 +137,14 @@
             android:layout_alignBottom="@+id/window"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/zero"
+            android:layout_marginTop="180dp"
             android:src="@drawable/yellow_up"
             android:tag="UP" />
 
         <ImageView
             android:id="@+id/zahlen"
             android:layout_width="210dp"
-            android:layout_height="280dp"
+            android:layout_height="290dp"
             android:layout_alignLeft="@id/window"
             android:layout_alignTop="@id/window"
             android:contentDescription="@string/zero"
@@ -158,3 +158,4 @@
         android:layout_weight="35" />
 
 </LinearLayout>
+

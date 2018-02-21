@@ -24,14 +24,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CreateSwiPIN extends AppCompatActivity {
+public class ConfirmSwiPIN extends AppCompatActivity {
 
-    private SwipeGestureCreate swipeGesture;
+    private SwipeGestureConfirm swipeGesture;
 
     float dimensions;
 
     private static String user = "";
     private String pwd = "";
+    private String pwdCreated="";
 
     int id;
 
@@ -41,7 +42,7 @@ public class CreateSwiPIN extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.activity_create_swi_pin2);
+        setContentView(R.layout.activity_confirm_swi_pin);
 
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -49,7 +50,7 @@ public class CreateSwiPIN extends AppCompatActivity {
         display.getSize(screenSize);
         dimensions = screenSize.x / 2;
         View w = findViewById(R.id.swipe);
-        swipeGesture = new SwipeGestureCreate(CreateSwiPIN.this);
+        swipeGesture = new SwipeGestureConfirm(ConfirmSwiPIN.this);
         w.setOnTouchListener(swipeGesture);
 
         changeGestures("l_");
@@ -65,7 +66,7 @@ public class CreateSwiPIN extends AppCompatActivity {
     // handle button activities
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        TextView pwdText = (TextView) findViewById(R.id.pwd);
+        TextView pwdText = (TextView) findViewById(R.id.pwd1);
 
         int id = item.getItemId();
 
@@ -159,29 +160,43 @@ public class CreateSwiPIN extends AppCompatActivity {
     }
 
 
-    public void pwdEntered(String entered1) {
-        //save the password
+    public void pwdEntered(String entered2) {
+        //Load created SwiPIN
         SharedPreferences settings=getSharedPreferences("swipin",0);
-        SharedPreferences.Editor editor= settings.edit();
-        editor.putString("passwordSwiPIN",entered1);
-        editor.apply();
-        editor.commit();
-        pwd=entered1;
-        Log.d("password0","entered password "+pwd);
-        
+        pwdCreated = settings.getString("passwordSwiPIN", "");
+        if (!pwdCreated.equals(entered2)) {
+            new AlertDialog.Builder(ConfirmSwiPIN.this).setTitle("SwiPINs do not match")
+                    .setMessage("Please try again!")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            swipeGesture.deleteEntry();
+                        }
+                    }).setCancelable(false).show();
+        }
+        else if(pwdCreated.equals(entered2)){
+            //save the password
+            SharedPreferences setting=getSharedPreferences("confirmSwipin",0);
+            SharedPreferences.Editor editor= setting.edit();
+            editor.putString("ConfirmSwiPIN",entered2);
+            editor.apply();
+            editor.commit();
+            pwd=entered2;
+            new AlertDialog.Builder(this).setTitle("SwiPIN created successfully")
+                    .setMessage("Please enter your SwiPIN!")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(getApplicationContext(), SwiPINActivity.class);
+                            startActivity(intent);
+                            finish();
+                            swipeGesture.deleteEntry();
 
-        new AlertDialog.Builder(this).setTitle("Confirm SwiPIN")
-                .setMessage("Please confirm your SwiPIN!")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(getApplicationContext(), ConfirmSwiPIN.class);
-                        startActivity(intent);
-                        finish();
-                        swipeGesture.deleteEntry();
+                        }
+                    }).setCancelable(false).show();
 
-                    }
-                }).setCancelable(false).show();
-    }
+
+        }
+}
 
     public void findCorrectGesture(String entered, String field) {
         int lastEntered = (Integer.valueOf(entered) % 10);
@@ -237,7 +252,7 @@ public class CreateSwiPIN extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, SwiPINActivity.class);
+        Intent intent = new Intent(this, CreateSwiPIN.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

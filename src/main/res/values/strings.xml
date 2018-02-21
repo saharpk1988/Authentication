@@ -45,6 +45,7 @@
     <string name="no_usr">Please enter user.</string>
     <string name="button">Button</string>
     <string name="clear">clear</string>
+    <string name="title_activity_confirm_swi_pin">ConfirmSwiPIN</string>
 
 
 </resources>

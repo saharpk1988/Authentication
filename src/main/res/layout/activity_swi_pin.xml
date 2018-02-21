@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg1"
-    tools:context="com.example.me.pinauthentication.PatternActivity">
+    tools:context="com.example.me.pinauthentication.SwiPINActivity">
 
     <Button
         android:id="@+id/button_create_SwiPIN"

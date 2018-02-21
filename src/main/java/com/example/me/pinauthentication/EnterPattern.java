@@ -10,20 +10,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -38,9 +29,10 @@ public class EnterPattern extends AppCompatActivity {
     String UserID;
     long FirstOrientation;
     Boolean Result;
-    int j=4;
-    int incorrectInput=0;
-    int authentionTry=2;
+    int authentionTry=5;
+    int remainingTry=3;
+    int authenticationNr;
+    int nrFailedAuthentication=0;
     Date startOrientation;
     ArrayList<Float> speedDetected = new ArrayList<>();
     private SensorManager sm;
@@ -59,7 +51,6 @@ public class EnterPattern extends AppCompatActivity {
         shake=SensorManager.GRAVITY_EARTH;
         setContentView(R.layout.activity_enter_pattern);
         final PatternLockView mPatternLockViewEnter;
-        Button enterPattern = findViewById(R.id.btnEnterPattern);
         mPatternLockViewEnter = (PatternLockView) findViewById(R.id.pattern_lock_view_enter);
         mPatternLockViewEnter.addPatternLockListener(new PatternLockViewListener() {
 
@@ -87,22 +78,9 @@ public class EnterPattern extends AppCompatActivity {
             @Override
             public void onComplete(List<PatternLockView.Dot> patternConfirm) {
                 PatternLockUtils.patternToString(mPatternLockViewEnter, patternConfirm);
-
                 myEnteredList = new PatternHandler().patternHandler(patternConfirm);
                 Log.d("test5", "Enter Pattern Page: " + myEnteredList);
                 endTime = new Date();
-            }
-
-            @Override
-            public void onCleared() {
-
-            }
-        });
-
-        for (int i=1;i<6;i++) {
-        enterPattern.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 sm.unregisterListener(sensorListener);
                 Log.d("sensor speed detected", "onClick: "+speedDetected);
                 float speedAverage=SpeedAverage.average(speedDetected);
@@ -111,135 +89,116 @@ public class EnterPattern extends AppCompatActivity {
                 //List<Integer> myConfirmList = ConfirmPattern.getMyConfirmList();
                 TinyDB tinydb = new TinyDB(EnterPattern.this);
                 final List<Integer> myConfirmList = tinydb.getListInt("password");
-                if (myConfirmList.equals(myEnteredList)) {
-
-                    Logger.patternLog("Pattern entry start time: " + startTime);
-                    Logger.patternLog("Pattern entry end time: " + endTime);
+                Logger.patternLog("Pattern entry start time: " + startTime);
+                Logger.patternLog("Pattern entry end time: " + endTime);
+                Log.d("Pattern start", "onComplete: "+ startTime);
+                Log.d("Pattern end", "onComplete: "+ endTime);
+                Log.d("Pattern speed", "onComplete: "+ speedAverage);
+                Logger.patternLog("Pattern created: " + myConfirmList);
+                Logger.patternLog("Pattern entered: " + myEnteredList);
+                //If result is true
+                if(myConfirmList.equals(myEnteredList)) {
                     Logger.patternLog("Total Pattern entry time without Error: " + ((endTime.getTime() - startTime.getTime())+FirstOrientation));
-                    Logger.patternLog("Pattern created: " + myConfirmList);
-                    Logger.patternLog("Pattern entered: " + myEnteredList);
                     Logger.patternLog("Result is true");
-                    //Last Authentication try when entering correct password
-                    if(j==0&& incorrectInput!=3){
-                        Logger.patternLog("Last Authentication try");
-                        Logger.patternLog("Average Speed detected is: "+speedAverage);
+                    Log.d("Pattern total", "onComplete: "+ ((endTime.getTime() - startTime.getTime())+FirstOrientation));
+                    Log.d("Pattern orientation", "onComplete: "+ FirstOrientation);
+                    //Its not the last authentication try
+                    if (authentionTry!=1) {
+                        authentionTry -= 1;
+                        remainingTry=3;
+                        Logger.patternLog("Authentications to go: " + (authentionTry+1));
+                        Logger.patternLog("Average Speed detected is: " + speedAverage);
                         Logger.patternLog("------------------");
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Correct Pattern")
-                                .setMessage("Authentication successful!"+"\n"+"Pattern entered correctly." )
+                                .setMessage("Authentications to go: " + authentionTry)
                                 .setCancelable(false)
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(getApplicationContext(), PatternActivity.class);
-                                        startActivity(intent);
-                                        finish();}
-                                }).setCancelable(false).show();
-
-
-                    } else{
-                        Logger.patternLog("Authentication try: "+(j+1));
-                        Logger.patternLog("Average Speed detected is: "+speedAverage);
-                        Logger.patternLog("------------------");
-                        new AlertDialog.Builder(EnterPattern.this).setTitle("Correct Pattern")
-                                .setMessage("Authentications to go: " + (j) + "\n" + "See password again?")
-                                .setCancelable(false)
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        new AlertDialog.Builder(EnterPattern.this).setTitle("View Password")
-                                                .setMessage("Your Password is: "+"\n"+myConfirmList+"\n"+"\n"+ Arrays.deepToString(ShowPattern.showPat(myConfirmList)).replace("], ", "\n").replace("[, ", "").replace("[[", "").replace("]]", "").replace(",", "").replace("[", ""))
-                                                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
-                                                        startOrientation = new Date();
-                                                        SharedPreferences settings=getSharedPreferences("PREFS",0);
-                                                        SharedPreferences.Editor editor= settings.edit();
-                                                        editor.putLong("startOrientation",startOrientation.getTime());
-                                                        editor.apply();
-                                                        mPatternLockViewEnter.clearPattern();
-                                                        myEnteredList.clear();
-                                                    }
-                                                }).setCancelable(false).show();
-
-
-                                    }
-                                })
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+                                        sm.registerListener(sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
                                         startOrientation = new Date();
-                                        SharedPreferences settings=getSharedPreferences("PREFS",0);
-                                        SharedPreferences.Editor editor= settings.edit();
-                                        editor.putLong("startOrientation",startOrientation.getTime());
+                                        SharedPreferences settings = getSharedPreferences("PREFS", 0);
+                                        SharedPreferences.Editor editor = settings.edit();
+                                        editor.putLong("startOrientation", startOrientation.getTime());
                                         editor.apply();
                                         mPatternLockViewEnter.clearPattern();
                                         myEnteredList.clear();
                                     }
                                 }).setCancelable(false).show();
-                        Log.d("J", "onClick: " + j);
-                        j -= 1;
-                    Result = true;
-                    //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + (endTime.getTime() - startTime.getTime()) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result);
-                    //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
-                    Logger.patternCsv("------------------");
-
-
-             }
-                }else {
-                    //Logger.patternLog("UserID: " + counter);
-                    Logger.patternLog("Pattern entry start time: " + startTime);
-                    Logger.patternLog("Pattern entry end time: " + endTime);
-                    Logger.patternLog("Total Pattern entry time with Error: " + ((endTime.getTime() - startTime.getTime())+FirstOrientation));
-                    Logger.patternLog("Pattern created: " + myConfirmList);
-                    Logger.patternLog("Pattern entered: " + myEnteredList);
-                    Logger.patternLog("Result is false");
-                     Result = false;
-                    //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + (endTime.getTime() - startTime.getTime()) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result);
-                    //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
-                    Logger.patternCsv("------------------");
-                    //Wrong password entered three times
-                    if(incorrectInput== 2){
-                        Logger.patternLog("Authentication try: "+(j+1));
-                        Logger.patternLog("Average Speed detected is: "+speedAverage);
+                    }
+                        //If result is true and its the last authentication try
+                        else if (authentionTry == 1) {
+                        authentionTry -= 1;
+                        Logger.patternLog("No more authentications to go. Authentication series is finished.");
+                        Logger.patternLog("Average Speed detected is: " + speedAverage);
+                        Logger.patternLog("Number of failed authentications for this user: "+nrFailedAuthentication);
                         Logger.patternLog("------------------");
-                        new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
-                                .setMessage("Remaining tries: "+authentionTry+"\n"+"Incorrect pattern entered three times." +"\n" + "Authentication failed."+"\n"+"Please try again!")
+                        new AlertDialog.Builder(EnterPattern.this).setTitle("Correct Pattern")
+                                .setMessage("Last authentication try. Authentication series finished.")
                                 .setCancelable(false)
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(getApplicationContext(), PatternActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         startActivity(intent);
                                         finish();
-
-
                                     }
                                 }).setCancelable(false).show();
                     }
-                    else if(j==0&&incorrectInput!=3){
-                        Logger.patternLog("Last Authentication try");
+                    Result = true;
+                    Log.d("Pattern result", "onComplete: "+ Result);
+                    //Log Pattern CSV File
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "- " + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ (authentionTry+1));
+                    //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
+                    Logger.patternCsv("------------------");
+                }
+                //If result is not true
+                else{
+                    remainingTry-=1;
+                    Logger.patternLog("Total Pattern entry time with Error: " + ((endTime.getTime() - startTime.getTime())+FirstOrientation));
+                    Log.d("Pattern total", "onComplete: "+ ((endTime.getTime() - startTime.getTime())+FirstOrientation));
+                    Logger.patternLog("Result is false");
+                    Result = false;
+                    //Log Pattern CSV File
+                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- " + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ authentionTry);
+                    //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
+                    Logger.patternCsv("------------------");
+                    Log.d("Pattern Orientation", "onComplete: "+ FirstOrientation);
+                    Log.d("Pattern speed", "onComplete: "+ speedAverage);
+                    Log.d("Pattern result", "onComplete: "+ Result);
+                    //Its not the last remaining try
+                    if(remainingTry!=0){
+                        Logger.patternLog("Authentication try: "+authentionTry);
+                        Logger.patternLog("Remaining try for this authentication: "+ remainingTry);
                         Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
-                                .setMessage("Authentication series are finished!"+"\n"+"Authentication successful." )
+                                .setMessage("Authentications to go: "+authentionTry+"\n"+"Tries for this authentication left: "+remainingTry)
                                 .setCancelable(false)
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(getApplicationContext(), PatternActivity.class);
-                                        startActivity(intent);
-                                        finish();}
+                                        sm.registerListener(sensorListener, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+                                        startOrientation = new Date();
+                                        SharedPreferences settings = getSharedPreferences("PREFS", 0);
+                                        SharedPreferences.Editor editor = settings.edit();
+                                        editor.putLong("startOrientation", startOrientation.getTime());
+                                        editor.apply();
+                                        mPatternLockViewEnter.clearPattern();
+                                        myEnteredList.clear();
+                                    }
                                 }).setCancelable(false).show();
-
-
                     }
-                    else  {
-                        //Authentication try when entering wrong password
-                        incorrectInput += 1;
-                        Logger.patternLog("Authentication try: "+(j+1));
+                    //If its last remaining try for this authentication try and its not the last authentication
+                   else if(remainingTry==0&&authentionTry!=1){
+                        nrFailedAuthentication+=1;
+                        Logger.patternLog("Authentication try: "+authentionTry);
+                        Logger.patternLog("Remaining try for this authentication: "+ remainingTry);
+                        Logger.patternLog("Authentication for this try failed.");
                         Logger.patternLog("Average Speed detected is: "+speedAverage);
                         Logger.patternLog("------------------");
-                        //PatternHandler.toastMessageHandler(EnterPIN.this, "Wrong password!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
+                        remainingTry=3;
+                        authentionTry-=1;
+                        authenticationNr=authentionTry+1;
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
-                                .setMessage("Authentications to go: " + (j) + "\n" +"Remaining tries: "+authentionTry+ "\n"+ "See password again?")
+                                .setMessage("Authentications to go: "+authentionTry+"\n"+"Previous authentication try failed."+"\n"+ "See password again?")
                                 .setCancelable(false)
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
@@ -259,6 +218,7 @@ public class EnterPattern extends AppCompatActivity {
                                                 }).setCancelable(false).show();
 
 
+
                                     }
                                 })
                                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -273,24 +233,48 @@ public class EnterPattern extends AppCompatActivity {
                                         myEnteredList.clear();
                                     }
                                 }).setCancelable(false).show();
-                        authentionTry-=1;
-                        Log.d("J", "onClick: " + j);
-                        j -= 1;}
+
+                    }
+                    //If its last remaining try for this authentication try and its the last authentication
+                    else if(remainingTry==0&&authentionTry==1){
+                        nrFailedAuthentication+=1;
+                        Logger.patternLog("Last authentication try. No more tries left for this authentication."+"\n"+"This authentication failed."+"\n"+ "Authentication series finished.");
+                        Logger.patternLog("Tries for this authentication left: "+ remainingTry);
+                        Logger.patternLog("Authentication for this try failed.");
+                        Logger.patternLog("Number of failed authentications for this user: "+nrFailedAuthentication);
+                        Logger.patternLog("Average Speed detected is: "+speedAverage);
+                        Logger.patternLog("------------------");
+                        new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
+                                .setMessage("No more authentications to go."+"\n"+"This authentication failed."+"\n"+ "Authentication series finished.")
+                                .setCancelable(false)
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }).setCancelable(false).show();
+
+
+                    }
+
 
 
 
                 }
 
+
+
+
+            }
+
+            @Override
+            public void onCleared() {
+
             }
         });
-    }
 
-
-
-
-
-
-    }
+     }
     private final SensorEventListener sensorListener= new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {

@@ -1,24 +1,18 @@
 package com.example.me.pinauthentication;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public final class ConfirmPattern extends AppCompatActivity {
@@ -40,10 +34,6 @@ public final class ConfirmPattern extends AppCompatActivity {
 
         final PatternLockView mPatternLockViewConfirm;
         final String password;
-
-        //SharedPreferences preferences =getSharedPreferences("PREFS",0);
-        //password = preferences.getString("password","0");
-
 
         Log.d("test9", "Create Pattern getter: " + CreatePattern.getMyList());
         Button confirmPattern= findViewById(R.id.btnConfirmPattern);
@@ -91,23 +81,6 @@ public final class ConfirmPattern extends AppCompatActivity {
                      //load the UserID
                      SharedPreferences settings=getSharedPreferences("myUserID",0);
                      UserID = settings.getString("userID", "");
-                     //save the password
-                     /*prefs = getPreferences(Context.MODE_PRIVATE);
-                     editorId = prefs.edit();
-                     totalCount = prefs.getInt("counter", 0);
-                     totalCount++;
-                     editorId.putInt("counter", totalCount);
-                     editorId.commit();
-                     SharedPreferences settings=getSharedPreferences("PREFS",0);
-                     SharedPreferences.Editor editorId= settings.edit();
-                     editorId.putInt("counter",totalCount);
-                     editorId.apply();*/
-                    /*startOrientation = new Date();
-                     SharedPreferences set=getSharedPreferences("PREFS",0);
-                     SharedPreferences.Editor editorNew= set.edit();
-                     editorNew.putLong("startOrientation",startOrientation.getTime());
-                     editorNew.apply();*/
-
                      Logger.patternLog("Creating Pattern");
                      Logger.patternLog("Pattern for user " + UserID + " has been created");
                      Logger.patternLog("Pattern created is: " + myConfirmList);

@@ -199,7 +199,7 @@ public class EnterPattern extends AppCompatActivity {
                         authentionTry-=1;
                         authenticationNr=authentionTry+1;
                         new AlertDialog.Builder(EnterPattern.this).setTitle("Wrong Pattern")
-                                .setMessage("Authentications to go: "+authentionTry+"\n"+"Previous authentication try failed."+"\n"+ "See password again?")
+                                .setMessage("Authentications to go: "+authentionTry+"\n"+"This authentication try failed."+"\n"+ "See password again?")
                                 .setCancelable(false)
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {

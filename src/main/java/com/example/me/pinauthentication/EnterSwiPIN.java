@@ -250,7 +250,7 @@ public class EnterSwiPIN extends AppCompatActivity {
                     authentionTry-=1;
                     authenticationNr=authentionTry+1;
                     new AlertDialog.Builder(EnterSwiPIN.this).setTitle("Wrong SwiPIN")
-                            .setMessage("Authentications to go: "+authentionTry+"\n"+"Previous authentication try failed."+"\n"+ "See password again?")
+                            .setMessage("Authentications to go: "+authentionTry+"\n"+"This authentication try failed."+"\n"+ "See password again?")
                             .setCancelable(false)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {

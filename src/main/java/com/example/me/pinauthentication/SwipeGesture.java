@@ -43,6 +43,7 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
     Date startTime;
     Date endTime;
     String user;
+    String Condition;
     long startOrientation;
     long orientation;
     long time;
@@ -220,6 +221,7 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
 
                 //load the UserID
                 user=SwiPINActivity.UserID;
+                Condition=SwiPINActivity.Condition;
                 Log.d("username1", "onTouch: "+user);
                 //load orientation time
                 startOrientation=SwiPINActivity.startOrientation.getTime();
@@ -235,6 +237,7 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                             orientation = (timed.getTime() - startOrientation);
                             Log.d("FlingstartOrientation13","here"+startOrientation);
                             Logger.swipinLog("\nUser ID: " + user);
+                            Logger.swipinLog("\nCondition: " + Condition);
                             Log.d("Fling userID ","here"+user);
                             Logger.swipinLog("\nTime orientation: " + orientation + "ms");
                             Log.d("Fling orientation0 ","here"+orientation);
@@ -245,6 +248,7 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                         else{
                             orientation = (timed.getTime() - newEntered.getTime());
                             Logger.swipinLog("\nUser ID: " + user);
+                            Logger.swipinLog("\nCondition: " + Condition);
                             Log.d("Fling userID ","here"+user);
                             Logger.swipinLog("\nTime orientation: " + orientation + "ms");
                             Log.d("Fling orientation ","here"+orientation);
@@ -412,12 +416,12 @@ public class SwipeGesture extends GestureDetector.SimpleOnGestureListener implem
                             Logger.swipinLog("\nClear is clicked");
                             Logger.swipinLog("\nPassword entered and deleted" + deletedNumbers);
                             Log.d("Fling cleared", "Password entered and deleted" + deletedNumbers);
-                            Logger.swipinCsv("UserID, Orientation Time, Entry Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Authentication Try, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+entry+"-"+ total + "- true"+ "- "+ enter + "- ");
+                            Logger.swipinCsv("UserID, Condition, Orientation Time(ms), Entry Time(ms), Total Time(ms), is Cleared(boolean), SwiPIN Entered, SwiPIN created, Authentication Try, Result(boolean), Average Motion Shake(mm/s): " + "\n" + user + "- " + Condition + "- " + orientation + "- "+entry+"-"+ total + "- true"+ "- "+ enter + "- ");
 
 
                         }
                         else{
-                            Logger.swipinCsv("UserID, Orientation Time, Entry Time, Total Time, is Cleared, SwiPIN Entered, SwiPIN created, Authentication Try, Result, Average Motion Shake: " + "\n" + user + "- " + orientation + "- "+entry+"-"+ total + "- false"+ "- "+ enter +"- " );
+                            Logger.swipinCsv("UserID, Condition, Orientation Time(ms), Entry Time(ms), Total Time(ms), is Cleared(boolean), SwiPIN Entered, SwiPIN created, Authentication Try, Result(boolean), Average Motion Shake(mm/s): " + "\n" + user + "- " + Condition + "- " + orientation + "- "+entry+"-"+ total + "- false"+ "- "+ enter +"- " );
 
                         }
                         act.pwdEntered(enter);

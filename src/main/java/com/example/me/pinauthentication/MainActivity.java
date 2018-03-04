@@ -86,27 +86,32 @@ public class MainActivity extends AppCompatActivity {
                 final AlertDialog dialog= mBuilder.create();
                 dialog.show();
                 final EditText userID = (EditText) mView.findViewById(R.id.etUserID);
+                final EditText condition = (EditText) mView.findViewById(R.id.etCondition);
                 final Button setUserID=(Button) mView.findViewById(R.id.btnUserID);
                 setUserID.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(!userID.getText().toString().isEmpty()){
+                        if(!userID.getText().toString().isEmpty() &&!condition.getText().toString().isEmpty()){
                             //Log userID to pattern Log File
                             //Logger.patternLog("UserID: " + userID.getText());
                             //Log userID to pin Log File
                            // Logger.writeFile("UserID: " + userID.getText());
                             //Log userID to Swipin Log File
                             //Logger.swipinLog("UserID: " + userID.getText());
-                            PatternHandler.toastMessageHandler(MainActivity.this, "User ID has been set!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
+                            PatternHandler.toastMessageHandler(MainActivity.this, "User ID and Condition have been set!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
                             dialog.dismiss();
                             SharedPreferences settings=getSharedPreferences("myUserID",0);
                             SharedPreferences.Editor editorId= settings.edit();
                             editorId.putString("userID",userID.getText().toString());
                             editorId.apply();
+                            SharedPreferences settingsCondition=getSharedPreferences("condition",0);
+                            SharedPreferences.Editor editorIdC= settingsCondition.edit();
+                            editorIdC.putString("condition",condition.getText().toString());
+                            editorIdC.apply();
 
                         }
                         else {
-                            PatternHandler.toastMessageHandler(MainActivity.this, "Please set User ID!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
+                            PatternHandler.toastMessageHandler(MainActivity.this, "Please set User ID and Condition!", Toast.LENGTH_SHORT, Gravity.BOTTOM,10, 57);
 
                         }
 

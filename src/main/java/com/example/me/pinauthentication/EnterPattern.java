@@ -27,6 +27,7 @@ public class EnterPattern extends AppCompatActivity {
     Date now;
     Date endTime;
     String UserID;
+    String Condition;
     long FirstOrientation;
     Boolean Result;
     int authentionTry=5;
@@ -42,9 +43,11 @@ public class EnterPattern extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //load the UserID
+        //load the UserID and Condition
         SharedPreferences settings = getSharedPreferences("myUserID", 0);
         UserID = settings.getString("userID", "");
+        SharedPreferences settingsCondition = getSharedPreferences("condition",0);
+        Condition = settingsCondition.getString("condition", "");
         sm=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
         //Gravity_Earth=9.80665f (Objects, when dropped, accelerate at the rate of 9.8 m/s^2 on earth)
@@ -63,6 +66,7 @@ public class EnterPattern extends AppCompatActivity {
                 long startEnter = new Date().getTime();
                 Log.d("Orienttime0", "onStarted: "+startEnter);
                 Logger.patternLog("UserID: " + UserID);
+                Logger.patternLog("Condition: " + Condition);
                 FirstOrientation = Math.abs(startEnter - startOrientation);
                 Logger.patternLog("Pattern entry orientation time: " + FirstOrientation);
                 Log.d("Orienttime1", "onStarted: "+FirstOrientation);
@@ -147,7 +151,7 @@ public class EnterPattern extends AppCompatActivity {
                     Result = true;
                     Log.d("Pattern result", "onComplete: "+ Result);
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "- "+(endTime.getTime() - startTime.getTime())+"-" + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ (authentionTry+1));
+                    Logger.patternCsv("UserID, Condition, Average Motion Shake(mm/s), Orientation Time(ms), Entry time(ms), Total Time(ms), Pattern Created, Pattern Entered, Result(boolean), Authentication try: " + "\n" + UserID + "- " + Condition + "- " + speedAverage + "- " + FirstOrientation + "- "+(endTime.getTime() - startTime.getTime())+"-" + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ (authentionTry+1));
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
                 }
@@ -159,7 +163,7 @@ public class EnterPattern extends AppCompatActivity {
                     Logger.patternLog("Result is false");
                     Result = false;
                     //Log Pattern CSV File
-                    Logger.patternCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Pattern Created, Pattern Entered, Result, Authentication try: " + "\n" + UserID + "- "+speedAverage+"- " + FirstOrientation + "- "+(endTime.getTime() - startTime.getTime())+"-" + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ authentionTry);
+                    Logger.patternCsv("UserID, Condition, Average Motion Shake(mm/s), Orientation Time(ms), Entry time(ms), Total Time(ms), Pattern Created, Pattern Entered, Result(boolean), Authentication try: " + "\n" + UserID + "- " + Condition + "- " + speedAverage+"- " + FirstOrientation + "- "+(endTime.getTime() - startTime.getTime())+"-" + ((endTime.getTime() - startTime.getTime())+FirstOrientation) + "- " + myConfirmList + "- " + myEnteredList + "- " + Result + "-"+ authentionTry);
                     //Logger.patternCsv(UserID +", " + Orientation+", "  + (endTime.getTime() - startTime.getTime())+", " + myConfirmList+", " + myEnteredList+", " + Result);
                     Logger.patternCsv("------------------");
                     Log.d("Pattern Orientation", "onComplete: "+ FirstOrientation);

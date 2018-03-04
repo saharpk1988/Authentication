@@ -18,6 +18,7 @@ public class SwiPINActivity extends AppCompatActivity {
     Button button_enter_SwiPIN;
     public static Date startOrientation;
     public static String UserID;
+    public static String Condition;
 
 
     @Override
@@ -25,6 +26,8 @@ public class SwiPINActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SharedPreferences settings=getSharedPreferences("myUserID",0);
         UserID = settings.getString("userID", "");
+        SharedPreferences settingsCondition = getSharedPreferences("condition",0);
+        Condition = settingsCondition.getString("condition", "");
         Log.d("username", "onTouch: "+UserID);
         setContentView(R.layout.activity_swi_pin);
         button_create_SwiPIN=(Button) findViewById(R.id.button_create_SwiPIN);

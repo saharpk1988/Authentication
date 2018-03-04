@@ -47,6 +47,7 @@ public class EnterPIN extends AppCompatActivity {
     boolean startFlag = true;
     boolean isCorrected = false;
     String UserID;
+    String Condition;
     public static String user;
     int authentionTry=5;
     int remainingTry=3;
@@ -75,9 +76,11 @@ public class EnterPIN extends AppCompatActivity {
         //load the password
         SharedPreferences settings=getSharedPreferences("pass",0);
         password = settings.getString("pinpassword", "");
-        //load the UserID
+        //load the UserID and Condition
         SharedPreferences setting = getSharedPreferences("myUserID", 0);
         UserID = setting.getString("userID", "");
+        SharedPreferences settingsCondition = getSharedPreferences("condition",0);
+        Condition = settingsCondition.getString("condition", "");
         user=UserID;
         sm=(SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sm.registerListener(sensorListener,sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
@@ -142,6 +145,7 @@ public class EnterPIN extends AppCompatActivity {
                         startTime = new Date();
                         startFlag = false;
                         Logger.writeFile("UserID: " + UserID);
+                        Logger.writeFile("Condition: " + Condition);
                         SharedPreferences settings = getSharedPreferences("PREFS", 0);
                         long startOrientation = settings.getLong("startOrientation", 0L);
                         long startEnter = startTime.getTime();
@@ -299,7 +303,7 @@ public class EnterPIN extends AppCompatActivity {
                                                   Log.d("PIN Orientation", "onComplete: "+ FirstOrientation);
                                                   Log.d("PIN Total", "onComplete: "+ total);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Authentication try, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "-" + (endTime.getTime() - startTime.getTime()) + "- " + total + "- " + authentionTry + "-" + durationDeleteKey + "- " + password + "- " + enteredCharacters + "- " + deletedCharacters + "- ");
+                                                  Logger.pinCsv("UserID, Condition, Average Motion Shake(mm/s), Orientation Time(ms), Entry time(ms), Total Time(ms), Authentication try, Correction Time(ms), Pin Created, Pin Entered, Deleted Numbers, Result(boolean): " + "\n" + UserID + "- " + Condition + "- " + speedAverage + "- " + FirstOrientation + "-" + (endTime.getTime() - startTime.getTime()) + "- " + total + "- " + authentionTry + "-" + durationDeleteKey + "- " + password + "- " + enteredCharacters + "- " + deletedCharacters + "- ");
 
 
                                               } else {
@@ -314,7 +318,7 @@ public class EnterPIN extends AppCompatActivity {
                                                   Log.d("Pattern Orientation", "onComplete: "+ FirstOrientation);
                                                   Log.d("Pattern Total", "onComplete: "+ total);
                                                   //Log Pin CSV File
-                                                  Logger.pinCsv("UserID, Average Motion Shake, Orientation Time, Entry time, Total Time, Authentication try, Correction Time, Pin Created, Pin Entered, Deleted Numbers, Result: " + "\n" + UserID + "- " + speedAverage + "- " + FirstOrientation + "-" + (endTime.getTime() - startTime.getTime()) + "- " + total + "-" + authentionTry + "-" + "0" + "- " + password + "- " + enteredCharacters + "- " + "[]" + "- ");
+                                                  Logger.pinCsv("UserID, Condition, Average Motion Shake(mm/s), Orientation Time(ms), Entry time(ms), Total Time(ms), Authentication try, Correction Time(ms), Pin Created, Pin Entered, Deleted Numbers, Result(boolean): " + "\n" + UserID + "- " + Condition + "- " + speedAverage + "- " + FirstOrientation + "-" + (endTime.getTime() - startTime.getTime()) + "- " + total + "-" + authentionTry + "-" + "0" + "- " + password + "- " + enteredCharacters + "- " + "[]" + "- ");
 
 
                                               }

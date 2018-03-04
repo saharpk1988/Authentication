@@ -27,6 +27,16 @@
         android:textColor="@color/black"
         android:inputType="textPersonName" />
 
+    <EditText
+        android:id="@+id/etCondition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:hint="Condition"
+        android:textColor="@color/black"
+        android:inputType="textPersonName" />
+
     <Button
         android:id="@+id/btnUserID"
         android:layout_width="match_parent"
